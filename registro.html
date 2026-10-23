@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b5fff">
+  <meta name="description" content="Crea tu cuenta de QR Médico.">
+  <title>Crear cuenta | QR Médico</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="auth-body">
+  <a class="brand auth-brand" href="index.html" aria-label="QR Médico, inicio">
+    <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+  </a>
+
+  <main class="auth-card">
+    <a class="back-link" href="index.html">← Volver al inicio</a>
+    <span class="eyebrow">EMPIEZA AQUÍ</span>
+    <h1>Crea tu cuenta</h1>
+    <p>Prepara tu espacio para administrar tus perfiles médicos.</p>
+
+    <form class="demo-form">
+      <label for="name">Nombre completo</label>
+      <input id="name" name="name" type="text" autocomplete="name" placeholder="Tu nombre completo" required>
+
+      <label for="email">Correo electrónico</label>
+      <input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required>
+
+      <label for="password">Crear contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required>
+
+      <label class="consent">
+        <input type="checkbox" required>
+        <span>Confirmo que revisaré y aceptaré las condiciones y la política de privacidad antes de utilizar el servicio.</span>
+      </label>
+
+      <button class="btn btn-primary full" type="submit">Crear cuenta</button>
+      <p class="form-note">Demostración visual: el registro real se habilitará en la Fase 2 al conectar Firebase Authentication. No ingreses datos reales en esta versión.</p>
+    </form>
+
+    <div class="auth-bottom">¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></div>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
