@@ -1,0 +1,22 @@
+QR MÉDICO — ARCHIVOS ACTUALIZADOS PARA FIREBASE
+
+Contenido:
+- index.html, registro.html, login.html: cargan app.js como módulo.
+- assets/css/styles.css: copia del CSS original, sin rediseño.
+- assets/js/firebase-config.js: configuración web de Firebase proporcionada.
+- assets/js/app.js: menú móvil + registro e inicio de sesión con Firebase Authentication.
+- planes.html: copia del archivo original.
+
+Cómo aplicarlos en GitHub desde el teléfono:
+1. Descarga y descomprime este ZIP.
+2. En tu repositorio, reemplaza los archivos con los mismos nombres respetando las carpetas.
+3. Sube/guarda los cambios (Commit changes).
+4. Espera a que GitHub Pages publique la actualización.
+
+IMPORTANTE:
+- Firebase Authentication debe tener habilitado Email/Password (ya lo configuraste).
+- Si aparece "dominio no autorizado", añade el dominio exacto de tu sitio publicado en Firebase Authentication > Configuración > Dominios autorizados.
+- La app requiere servirse desde HTTP/HTTPS; no abras los HTML directamente como archivos locales.
+- Firestore se inicializa, pero aún no se guardan perfiles médicos ni se han definido reglas para ellos. No introduzcas datos médicos reales todavía.
+- El acceso con Google y el panel privado aún no están implementados.
+- firebase-config.js contiene configuración pública de la aplicación web, no una clave privada de cuenta de servicio.

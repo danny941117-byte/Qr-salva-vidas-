@@ -10,8 +10,7 @@
 </head>
 <body class="auth-body">
   <a class="brand auth-brand" href="index.html" aria-label="QR Médico, inicio">
-    <span class="brand-mark">+</span>
-    <span>QR <b>Médico</b></span>
+    <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
   </a>
 
   <main class="auth-card">
@@ -22,35 +21,13 @@
 
     <form class="demo-form">
       <label for="name">Nombre completo</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        autocomplete="name"
-        placeholder="Tu nombre completo"
-        required
-      >
+      <input id="name" name="name" type="text" autocomplete="name" placeholder="Tu nombre completo" required>
 
       <label for="email">Correo electrónico</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        placeholder="tu@correo.com"
-        required
-      >
+      <input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required>
 
       <label for="password">Crear contraseña</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        autocomplete="new-password"
-        minlength="8"
-        placeholder="Mínimo 8 caracteres"
-        required
-      >
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres" required>
 
       <label class="consent">
         <input type="checkbox" required>
@@ -58,19 +35,12 @@
       </label>
 
       <button class="btn btn-primary full" type="submit">Crear cuenta</button>
-
-      <p class="form-note">
-        Demostración visual: el registro real se habilitará en la Fase 2 al
-        conectar Firebase Authentication. No ingreses datos reales en esta
-        versión.
-      </p>
+      <p class="form-note">Demostración visual: el registro real se habilitará en la Fase 2 al conectar Firebase Authentication. No ingreses datos reales en esta versión.</p>
     </form>
 
-    <div class="auth-bottom">
-      ¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a>
-    </div>
+    <div class="auth-bottom">¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></div>
   </main>
 
-  <script src="assets/js/app.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>
