@@ -3,58 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b5fff">
-  <meta name="description" content="Inicia sesión en QR Médico.">
+  <meta name="theme-color" content="#0b4dcc">
   <title>Iniciar sesión | QR Médico</title>
   <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body class="auth-body">
-  <a class="brand auth-brand" href="index.html" aria-label="QR Médico, inicio">
-    <span class="brand-mark">+</span>
-    <span>QR <b>Médico</b></span>
-  </a>
-
-  <main class="auth-card">
-    <a class="back-link" href="index.html">← Volver al inicio</a>
-    <span class="eyebrow">BIENVENIDO DE NUEVO</span>
-    <h1>Inicia sesión</h1>
-    <p>Accede a tus perfiles médicos y códigos QR.</p>
-
-    <form class="demo-form">
-      <label for="email">Correo electrónico</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        placeholder="tu@correo.com"
-        required
-      >
-
-      <label for="password">Contraseña</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Tu contraseña"
-        required
-      >
-
-      <button class="btn btn-primary full" type="submit">Iniciar sesión</button>
-
-      <p class="form-note">
-        Demostración visual: el inicio de sesión real se habilitará en la Fase 2
-        al conectar Firebase Authentication. No ingreses contraseñas reales en
-        esta versión.
-      </p>
-    </form>
-
-    <div class="auth-bottom">
-      ¿Todavía no tienes cuenta? <a href="registro.html">Crear cuenta</a>
-    </div>
-  </main>
-
   <script type="module" src="assets/js/app.js"></script>
+</head>
+<body>
+  <main class="auth-page">
+    <a class="brand" href="index.html" aria-label="QR Médico, volver al inicio">
+      <span class="brand-mark">+</span><span>QR <strong>Médico</strong></span>
+    </a>
+
+    <section class="auth-card">
+      <p class="eyebrow">Bienvenido de nuevo</p>
+      <h1>Inicia sesión</h1>
+      <p class="auth-intro">Accede a tus perfiles médicos y códigos QR.</p>
+
+      <form id="login-form" novalidate>
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" autocomplete="email"
+               placeholder="tu@correo.com" required>
+
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password"
+               autocomplete="current-password" placeholder="Tu contraseña"
+               required minlength="6">
+
+        <button id="login-button" type="submit">Iniciar sesión</button>
+        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="auth-footer">
+        ¿Todavía no tienes cuenta? <a href="registro.html">Crear cuenta</a>
+      </div>
+      <p class="back-link"><a href="index.html">← Volver al inicio</a></p>
+    </section>
+  </main>
 </body>
 </html>

@@ -3,56 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b5fff">
-  <meta name="description" content="Panel privado de QR Médico.">
+  <meta name="theme-color" content="#0b4dcc">
   <title>Mi panel | QR Médico</title>
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="assets/css/panel.css">
-  <script type="module" src="assets/js/panel.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
 </head>
-<body class="panel-body">
-  <header class="site-header panel-header">
-    <a class="brand" href="index.html" aria-label="QR Médico, inicio">
-      <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
-    </a>
-    <button id="logoutButton" class="btn btn-outline" type="button">Cerrar sesión</button>
-  </header>
+<body data-page="panel">
+  <main class="auth-page panel-page">
+    <header class="panel-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">+</span><span>QR <strong>Médico</strong></span>
+      </a>
+      <button id="logout-button" class="button-secondary" type="button">Cerrar sesión</button>
+    </header>
 
-  <main class="container panel-main">
-    <section class="panel-welcome">
-      <span class="eyebrow">ÁREA PRIVADA</span>
-      <h1>Tu panel de QR Médico</h1>
-      <p>Bienvenido/a, <strong id="userName">comprobando tu sesión…</strong></p>
-      <p class="panel-email" id="userEmail"></p>
-    </section>
+    <section class="auth-card panel-card">
+      <p class="eyebrow">Área privada</p>
+      <h1 id="panel-name">Mi espacio médico</h1>
+      <p>Sesión iniciada como <strong id="panel-email">Verificando sesión…</strong></p>
 
-    <section class="panel-notice" role="status">
-      <span class="notice-icon" aria-hidden="true">🔐</span>
-      <div>
-        <h2>Tu espacio está preparado</h2>
-        <p>La cuenta ya está conectada. El siguiente paso será crear y proteger los perfiles médicos antes de guardar información personal o de salud.</p>
+      <div class="panel-notice">
+        <h2>Bienvenido a QR Médico</h2>
+        <p>La autenticación está conectada con Firebase. En la siguiente etapa añadiremos
+          la administración de perfiles médicos familiares y la generación de códigos QR.</p>
       </div>
-    </section>
 
-    <section class="panel-section">
-      <div class="panel-section-heading">
-        <div>
-          <span class="eyebrow">GESTIÓN FAMILIAR</span>
+      <div class="panel-grid">
+        <article class="panel-tile">
+          <span aria-hidden="true">＋</span>
           <h2>Perfiles médicos</h2>
-          <p>Próximamente podrás administrar tu perfil y los de tus familiares.</p>
-        </div>
-        <button class="btn btn-primary" type="button" disabled aria-disabled="true">Crear perfil · Próximamente</button>
+          <p>La gestión de perfiles se habilitará en la siguiente etapa.</p>
+        </article>
+        <article class="panel-tile">
+          <span aria-hidden="true">▦</span>
+          <h2>Códigos QR</h2>
+          <p>Los códigos se crearán cuando esté listo el módulo de perfiles.</p>
+        </article>
       </div>
-
-      <div class="empty-profiles">
-        <div class="empty-icon" aria-hidden="true">＋</div>
-        <h3>Aún no hay perfiles médicos</h3>
-        <p>No se ha guardado ningún perfil. Estamos preparando la estructura y las reglas de privacidad.</p>
-      </div>
+      <p class="security-note">No introduzcas todavía datos médicos reales. Primero configuraremos y probaremos las reglas de seguridad de Firestore.</p>
     </section>
-
-    <p class="panel-safety"><strong>Importante:</strong> no introduzcas información médica real todavía. Los perfiles, los códigos QR y los permisos de acceso aún no están implementados.</p>
-    <a class="panel-back" href="index.html">← Volver a la página principal</a>
   </main>
 </body>
 </html>
