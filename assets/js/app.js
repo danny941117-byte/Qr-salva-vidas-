@@ -7,13 +7,18 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Menú de navegación para teléfonos.
+  // ==========================================
+  // MENÚ DE NAVEGACIÓN PARA TELÉFONOS
+  // ==========================================
+
   const menuButton = document.querySelector(".menu-toggle");
   const nav = document.querySelector(".nav-links");
 
   if (menuButton && nav) {
     menuButton.addEventListener("click", () => {
-      const abierto = menuButton.getAttribute("aria-expanded") === "true";
+      const abierto =
+        menuButton.getAttribute("aria-expanded") === "true";
+
       menuButton.setAttribute("aria-expanded", String(!abierto));
       nav.classList.toggle("is-open", !abierto);
     });
@@ -26,10 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ==========================================
+  // FORMULARIOS DE FIREBASE AUTHENTICATION
+  // ==========================================
+
   const formulario = document.querySelector(".demo-form");
+
   if (!formulario) return;
 
-  const esRegistro = window.location.pathname.toLowerCase().endsWith("/registro.html");
+  const rutaActual = window.location.pathname.toLowerCase();
+  const esRegistro = rutaActual.endsWith("/registro.html");
+
   const boton = formulario.querySelector('button[type="submit"]');
   const nota = formulario.querySelector(".form-note");
 
@@ -45,61 +57,134 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function traducirError(codigo) {
     const errores = {
-      "auth/email-already-in-use": "Este correo ya tiene una cuenta. Prueba iniciar sesión.",
-      "auth/invalid-email": "El correo electrónico no es válido.",
-      "auth/weak-password": "La contraseña es demasiado débil. Utiliza al menos 8 caracteres.",
-      "auth/invalid-credential": "El correo o la contraseña son incorrectos.",
-      "auth/user-not-found": "No encontramos una cuenta con ese correo.",
-      "auth/wrong-password": "La contraseña es incorrecta.",
-      "auth/too-many-requests": "Hubo demasiados intentos. Espera un momento e inténtalo de nuevo.",
-      "auth/network-request-failed": "No se pudo conectar. Comprueba tu conexión a internet.",
-      "auth/operation-not-allowed": "El método de correo y contraseña no está habilitado en Firebase.",
-      "auth/unauthorized-domain": "Este dominio no está autorizado en Firebase Authentication."
+      "auth/email-already-in-use":
+        "Este correo ya tiene una cuenta. Prueba iniciar sesión.",
+
+      "auth/invalid-email":
+        "El correo electrónico no es válido.",
+
+      "auth/weak-password":
+        "La contraseña es demasiado débil. Utiliza al menos 8 caracteres.",
+
+      "auth/invalid-credential":
+        "El correo o la contraseña son incorrectos.",
+
+      "auth/user-not-found":
+        "No encontramos una cuenta con ese correo.",
+
+      "auth/wrong-password":
+        "La contraseña es incorrecta.",
+
+      "auth/too-many-requests":
+        "Hubo demasiados intentos. Espera un momento e inténtalo de nuevo.",
+
+      "auth/network-request-failed":
+        "No se pudo conectar. Comprueba tu conexión a internet.",
+
+      "auth/operation-not-allowed":
+        "El acceso con correo y contraseña no está habilitado en Firebase.",
+
+      "auth/unauthorized-domain":
+        "Este dominio no está autorizado en Firebase Authentication."
     };
-    return errores[codigo] || "No pudimos completar la operación. Código: " + codigo;
+
+    return errores[codigo] ||
+      "No pudimos completar la operación. Código: " + codigo;
   }
 
   formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
+
     if (!formulario.reportValidity()) return;
 
-    const email = formulario.querySelector("#email")?.value.trim();
-    const password = formulario.querySelector("#password")?.value;
-    const nombre = formulario.querySelector("#name")?.value.trim();
+    const email = formulario
+      .querySelector("#email")
+      ?.value.trim();
+
+    const password = formulario
+      .querySelector("#password")
+      ?.value;
+
+    const nombre = formulario
+      .querySelector("#name")
+      ?.value.trim();
 
     if (!email || !password) {
-      mostrarMensaje("Completa el correo y la contraseña.", true);
+      mostrarMensaje(
+        "Completa el correo electrónico y la contraseña.",
+        true
+      );
       return;
     }
 
-    boton.disabled = true;
+    if (!boton) return;
+
     const textoOriginal = boton.textContent;
-    boton.textContent = esRegistro ? "Creando cuenta..." : "Iniciando sesión...";
+
+    boton.disabled = true;
+    boton.textContent = esRegistro
+      ? "Creando cuenta..."
+      : "Iniciando sesión...";
 
     try {
+      // ======================================
+      // REGISTRO DE USUARIO
+      // ======================================
+
       if (esRegistro) {
-        if (!nombre) throw new Error("Escribe tu nombre completo.");
+        if (!nombre) {
+          throw new Error("Escribe tu nombre completo.");
+        }
 
-        const resultado = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(resultado.user, { displayName: nombre });
+        const resultado = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-        mostrarMensaje("¡Cuenta creada correctamente! Te llevaremos al inicio de sesión.");
+        await updateProfile(resultado.user, {
+          displayName: nombre
+        });
+
+        mostrarMensaje(
+          "¡Cuenta creada correctamente! Te llevaremos al inicio de sesión."
+        );
+
         formulario.reset();
 
         setTimeout(() => {
           window.location.href = "login.html";
-        }, 1800);
+        }, 1500);
+
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        mostrarMensaje("¡Inicio de sesión correcto! La autenticación ya funciona. El panel privado se añadirá en la siguiente etapa.");
-        boton.textContent = "Sesión iniciada";
-        // No redirigimos todavía: el panel privado aún no se ha creado.
+        // ====================================
+        // INICIO DE SESIÓN
+        // ====================================
+
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        mostrarMensaje(
+          "¡Inicio de sesión correcto! Entrando a tu panel..."
+        );
+
+        boton.textContent = "Acceso correcto";
+
+        setTimeout(() => {
+          window.location.href = "panel.html";
+        }, 800);
       }
+
     } catch (error) {
       const mensaje = error.message?.startsWith("Escribe ")
         ? error.message
         : traducirError(error.code || "unknown");
+
       mostrarMensaje(mensaje, true);
+
       boton.disabled = false;
       boton.textContent = textoOriginal;
     }
