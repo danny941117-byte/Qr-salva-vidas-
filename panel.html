@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b5fff">
+  <meta name="description" content="Panel privado de QR Médico.">
+  <title>Mi panel | QR Médico</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/panel.css">
+  <script type="module" src="assets/js/panel.js"></script>
+</head>
+<body class="panel-body">
+  <header class="site-header panel-header">
+    <a class="brand" href="index.html" aria-label="QR Médico, inicio">
+      <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+    </a>
+    <button id="logoutButton" class="btn btn-outline" type="button">Cerrar sesión</button>
+  </header>
+
+  <main class="container panel-main">
+    <section class="panel-welcome">
+      <span class="eyebrow">ÁREA PRIVADA</span>
+      <h1>Tu panel de QR Médico</h1>
+      <p>Bienvenido/a, <strong id="userName">comprobando tu sesión…</strong></p>
+      <p class="panel-email" id="userEmail"></p>
+    </section>
+
+    <section class="panel-notice" role="status">
+      <span class="notice-icon" aria-hidden="true">🔐</span>
+      <div>
+        <h2>Tu espacio está preparado</h2>
+        <p>La cuenta ya está conectada. El siguiente paso será crear y proteger los perfiles médicos antes de guardar información personal o de salud.</p>
+      </div>
+    </section>
+
+    <section class="panel-section">
+      <div class="panel-section-heading">
+        <div>
+          <span class="eyebrow">GESTIÓN FAMILIAR</span>
+          <h2>Perfiles médicos</h2>
+          <p>Próximamente podrás administrar tu perfil y los de tus familiares.</p>
+        </div>
+        <button class="btn btn-primary" type="button" disabled aria-disabled="true">Crear perfil · Próximamente</button>
+      </div>
+
+      <div class="empty-profiles">
+        <div class="empty-icon" aria-hidden="true">＋</div>
+        <h3>Aún no hay perfiles médicos</h3>
+        <p>No se ha guardado ningún perfil. Estamos preparando la estructura y las reglas de privacidad.</p>
+      </div>
+    </section>
+
+    <p class="panel-safety"><strong>Importante:</strong> no introduzcas información médica real todavía. Los perfiles, los códigos QR y los permisos de acceso aún no están implementados.</p>
+    <a class="panel-back" href="index.html">← Volver a la página principal</a>
+  </main>
+</body>
+</html>
