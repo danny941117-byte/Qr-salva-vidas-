@@ -50,20 +50,6 @@
   <section class="cta-section container"><div><span class="eyebrow">DA EL PRIMER PASO</span><h2>Prepara tu ficha de emergencia.</h2><p>Organiza tu información y la de tu familia en un solo lugar.</p></div><a class="btn btn-light btn-large" href="registro.html">Comenzar ahora <span>→</span></a></section>
 </main>
 <footer class="site-footer"><div class="container footer-inner"><a class="brand brand-footer" href="index.html"><span class="brand-mark">+</span><span>QR <b>Médico</b></span></a><span>© 2026 QR Médico · Información de emergencia bajo tu control.</span><div><a href="planes.html">Planes</a><a href="login.html">Iniciar sesión</a></div></div></footer>
-<script>
-const toggle = document.querySelector('.menu-toggle');
-const nav = document.querySelector('.nav-links');
-if (toggle && nav) {
-  toggle.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(open));
-  });
-}
-document.querySelectorAll('.demo-form').forEach(form => {
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    alert('Esta es una demostración visual. El registro y el inicio de sesión se activarán en la Fase 2 al conectar Firebase.');
-  });
-});
-</script>
+<script src="assets/js/app.js"></script>
+
 </body></html>
