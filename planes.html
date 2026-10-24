@@ -10,9 +10,11 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="index.html"><span class="brand-mark">+</span><span>QR <b>Médico</b></span></a>
-  <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-  <nav class="nav-links">
+  <a class="brand" href="index.html" aria-label="QR Médico, inicio">
+    <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+  </a>
+  <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
+  <nav class="nav-links" aria-label="Navegación principal">
     <a href="index.html#como-funciona">Cómo funciona</a>
     <a href="planes.html" aria-current="page">Planes</a>
     <a href="index.html#privacidad">Privacidad</a>
@@ -36,7 +38,11 @@
       <h2>Para ti</h2>
       <div class="price">Q15 <small>/ mes</small></div>
       <p>Una ficha médica para una persona.</p>
-      <ul><li>1 perfil médico</li><li>Un QR individual</li><li>Datos de emergencia autorizados</li></ul>
+      <ul>
+        <li>1 perfil médico</li>
+        <li>Un QR individual</li>
+        <li>Datos de emergencia autorizados</li>
+      </ul>
       <a class="btn btn-outline full" href="registro.html">Comenzar</a>
     </article>
 
@@ -46,7 +52,11 @@
       <h2>Para compartir</h2>
       <div class="price">Q25 <small>/ mes</small></div>
       <p>Dos perfiles independientes.</p>
-      <ul><li>2 perfiles médicos</li><li>Un QR por perfil</li><li>Información separada</li></ul>
+      <ul>
+        <li>2 perfiles médicos</li>
+        <li>Un QR por perfil</li>
+        <li>Información separada</li>
+      </ul>
       <a class="btn btn-primary full" href="registro.html">Comenzar</a>
     </article>
 
@@ -55,7 +65,11 @@
       <h2>Para la familia</h2>
       <div class="price">Q45 <small>/ mes</small></div>
       <p>Organiza la información familiar.</p>
-      <ul><li>Hasta 5 perfiles</li><li>Un QR por perfil</li><li>Administración central</li></ul>
+      <ul>
+        <li>Hasta 5 perfiles</li>
+        <li>Un QR por perfil</li>
+        <li>Administración central</li>
+      </ul>
       <a class="btn btn-outline full" href="registro.html">Comenzar</a>
     </article>
 
@@ -64,7 +78,11 @@
       <h2>Familia grande</h2>
       <div class="price">Q75 <small>/ mes</small></div>
       <p>Más perfiles bajo una cuenta principal.</p>
-      <ul><li>Hasta 10 perfiles</li><li>Un QR por perfil</li><li>Administración central</li></ul>
+      <ul>
+        <li>Hasta 10 perfiles</li>
+        <li>Un QR por perfil</li>
+        <li>Administración central</li>
+      </ul>
       <a class="btn btn-outline full" href="registro.html">Comenzar</a>
     </article>
   </div>
@@ -76,11 +94,17 @@
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <a class="brand brand-footer" href="index.html"><span class="brand-mark">+</span><span>QR <b>Médico</b></span></a>
+    <a class="brand brand-footer" href="index.html" aria-label="QR Médico, inicio">
+      <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+    </a>
     <span>© 2026 QR Médico · Información de emergencia bajo tu control.</span>
-    <div><a href="index.html">Inicio</a><a href="login.html">Iniciar sesión</a></div>
+    <div>
+      <a href="index.html">Inicio</a>
+      <a href="login.html">Iniciar sesión</a>
+    </div>
   </div>
 </footer>
-<script src="assets/js/app.js"></script>
+
+<!-- app.js se añadirá cuando implementemos el menú interactivo. -->
 </body>
 </html>
