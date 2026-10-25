@@ -4,40 +4,661 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b4dcc">
+  <meta name="description" content="Inicia sesión de forma segura en QR Médico.">
   <title>Iniciar sesión | QR Médico</title>
+
   <link rel="stylesheet" href="assets/css/styles.css">
-  <script type="module" src="assets/js/app.js"></script>
+
+  <style>
+    .diagnostic-box {
+      margin-top: 22px;
+      padding: 15px;
+      border: 1px solid #dbe3ef;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    .diagnostic-box summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .diagnostic-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .diagnostic-item:last-child {
+      border-bottom: 0;
+    }
+
+    .status-ok { color: #166534; }
+    .status-error { color: #b91c1c; }
+    .status-warning { color: #92400e; }
+    .status-pending { color: #64748b; }
+
+    .diagnostic-detail {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    #form-message {
+      display: none;
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+
+    #form-message.visible {
+      display: block;
+    }
+
+    #form-message[data-type="error"] {
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+    }
+
+    #form-message[data-type="success"] {
+      color: #166534;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+    }
+
+    #form-message[data-type="info"] {
+      color: #1e40af;
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
+    }
+
+    #login-button {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 18px;
+    }
+
+    #login-button:disabled,
+    #diagnostic-button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    #diagnostic-button {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .technical-note {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
-<body>
+
+<body class="auth-body">
+
   <main class="auth-page">
-    <a class="brand" href="index.html" aria-label="QR Médico, volver al inicio">
-      <span class="brand-mark">+</span><span>QR <strong>Médico</strong></span>
+
+    <a class="brand" href="index.html"
+       aria-label="QR Médico, volver al inicio">
+      <span class="brand-mark">+</span>
+      <span>QR <strong>Médico</strong></span>
     </a>
 
     <section class="auth-card">
-      <p class="eyebrow">Bienvenido de nuevo</p>
-      <h1>Inicia sesión</h1>
-      <p class="auth-intro">Accede a tus perfiles médicos y códigos QR.</p>
 
-      <form id="login-form" novalidate>
+      <a class="back-link" href="index.html">← Volver al inicio</a>
+
+      <p class="eyebrow">BIENVENIDO DE NUEVO</p>
+
+      <h1>Inicia sesión</h1>
+
+      <p class="auth-intro">
+        Accede a tus perfiles médicos y códigos QR.
+      </p>
+
+      <form id="login-form">
+
         <label for="email">Correo electrónico</label>
-        <input id="email" name="email" type="email" autocomplete="email"
-               placeholder="tu@correo.com" required>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="tu@correo.com"
+          maxlength="254"
+          required
+        >
 
         <label for="password">Contraseña</label>
-        <input id="password" name="password" type="password"
-               autocomplete="current-password" placeholder="Tu contraseña"
-               required minlength="6">
 
-        <button id="login-button" type="submit">Iniciar sesión</button>
-        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Tu contraseña"
+          required
+          maxlength="128"
+        >
+
+        <button id="login-button" type="submit" disabled>
+          Comprobando Firebase...
+        </button>
+
+        <p
+          id="form-message"
+          class="form-message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
       </form>
 
       <div class="auth-footer">
-        ¿Todavía no tienes cuenta? <a href="registro.html">Crear cuenta</a>
+        ¿Todavía no tienes cuenta?
+        <a href="registro.html">Crear cuenta</a>
       </div>
-      <p class="back-link"><a href="index.html">← Volver al inicio</a></p>
+
+      <p class="back-link">
+        <a href="index.html">← Volver al inicio</a>
+      </p>
+
+      <details class="diagnostic-box" open>
+        <summary>Diagnóstico técnico</summary>
+
+        <div id="diagnostic-results" aria-live="polite">
+          <div class="diagnostic-item status-pending">
+            Esperando JavaScript...
+          </div>
+        </div>
+
+        <button
+          id="diagnostic-button"
+          type="button"
+          disabled
+        >
+          Comprobar conexión
+        </button>
+
+        <p class="technical-note">
+          La inicialización no demuestra por sí sola que las credenciales
+          sean correctas. La autenticación real se comprueba al iniciar
+          sesión. Una lectura denegada por las reglas de Firestore no
+          significa necesariamente que el servicio esté desconectado.
+        </p>
+      </details>
+
     </section>
   </main>
+
+  <script>
+    window.addEventListener("error", function(event) {
+      const results = document.getElementById("diagnostic-results");
+      if (!results) return;
+
+      const item = document.createElement("div");
+      item.className = "diagnostic-item status-error";
+      item.textContent =
+        "✖ Error JavaScript: " +
+        (event.message || "Error no identificado") +
+        (event.filename
+          ? "\nArchivo: " + event.filename.split("/").pop()
+          : "") +
+        (event.lineno ? "\nLínea: " + event.lineno : "");
+
+      results.appendChild(item);
+    });
+
+    window.addEventListener("unhandledrejection", function(event) {
+      const message = document.getElementById("form-message");
+      if (!message) return;
+
+      message.dataset.type = "error";
+      message.classList.add("visible");
+      message.textContent =
+        "Error inesperado: " +
+        (event.reason?.message || String(event.reason));
+    });
+  </script>
+
+  <script type="module">
+    const $ = id => document.getElementById(id);
+
+    const form = $("login-form");
+    const emailInput = $("email");
+    const passwordInput = $("password");
+    const loginButton = $("login-button");
+    const message = $("form-message");
+    const results = $("diagnostic-results");
+    const diagnosticButton = $("diagnostic-button");
+
+    let auth = null;
+    let db = null;
+    let signInWithEmailAndPassword = null;
+    let getDoc = null;
+    let doc = null;
+
+    let initialized = false;
+    let signingIn = false;
+    let checking = false;
+
+    const states = new Map();
+
+    function setStatus(id, title, status, detail) {
+      states.set(id, { title, status, detail });
+      renderDiagnostics();
+    }
+
+    function renderDiagnostics() {
+      results.replaceChildren();
+
+      const order = [
+        "javascript",
+        "config",
+        "authsdk",
+        "firesdk",
+        "auth",
+        "firestore",
+        "network",
+        "login"
+      ];
+
+      for (const id of order) {
+        const item = states.get(id);
+        if (!item) continue;
+
+        const row = document.createElement("div");
+        row.className = "diagnostic-item status-" + item.status;
+
+        const icon = {
+          ok: "✔",
+          error: "✖",
+          warning: "⚠",
+          pending: "⏳"
+        }[item.status] || "•";
+
+        const title = document.createElement("strong");
+        title.textContent = icon + " " + item.title;
+
+        const detail = document.createElement("span");
+        detail.className = "diagnostic-detail";
+        detail.textContent = item.detail;
+
+        row.append(title, detail);
+        results.appendChild(row);
+      }
+    }
+
+    function showMessage(text, type = "error") {
+      message.dataset.type = type;
+      message.textContent = text;
+      message.classList.add("visible");
+    }
+
+    function clearMessage() {
+      message.classList.remove("visible");
+      message.textContent = "";
+    }
+
+    function errorDetails(error) {
+      return [
+        error?.code ? "Código: " + error.code : "",
+        error?.message ? "Detalle técnico: " + error.message : ""
+      ].filter(Boolean).join("\n");
+    }
+
+    function explainError(error) {
+      const code = error?.code || "";
+
+      const explanations = {
+        "auth/invalid-email":
+          "El correo electrónico no tiene un formato válido.",
+
+        "auth/invalid-credential":
+          "El correo o la contraseña son incorrectos.",
+
+        "auth/user-not-found":
+          "No existe una cuenta con ese correo. Comprueba el dato o regístrate.",
+
+        "auth/wrong-password":
+          "La contraseña es incorrecta.",
+
+        "auth/user-disabled":
+          "Esta cuenta está deshabilitada.",
+
+        "auth/too-many-requests":
+          "Firebase limitó temporalmente los intentos. Espera antes de probar otra vez.",
+
+        "auth/network-request-failed":
+          "No se pudo conectar con Firebase. Comprueba tu conexión a internet.",
+
+        "auth/operation-not-allowed":
+          "Activa Correo electrónico/contraseña en Firebase Authentication.",
+
+        "auth/invalid-api-key":
+          "La API key de Firebase no es válida.",
+
+        "auth/app-not-authorized":
+          "La aplicación o el dominio no está autorizado.",
+
+        "permission-denied":
+          "Firestore denegó la lectura. Revisa las reglas de seguridad.",
+
+        "unavailable":
+          "Firestore no está disponible temporalmente.",
+
+        "failed-precondition":
+          "Firestore requiere una configuración adicional."
+      };
+
+      return explanations[code] ||
+        "No se pudo completar la operación. Consulta el código técnico.";
+    }
+
+    function updateButton() {
+      loginButton.disabled = !initialized || signingIn;
+
+      loginButton.textContent = signingIn
+        ? "Verificando credenciales..."
+        : initialized
+          ? "Iniciar sesión"
+          : "Firebase no está listo";
+    }
+
+    async function initialize() {
+      setStatus(
+        "javascript",
+        "JavaScript",
+        "ok",
+        "El módulo de inicio de sesión está ejecutándose."
+      );
+
+      setStatus(
+        "config",
+        "Configuración Firebase",
+        "pending",
+        "Cargando assets/js/firebase-config.js..."
+      );
+
+      setStatus(
+        "authsdk",
+        "SDK Authentication",
+        "pending",
+        "Inicializando..."
+      );
+
+      setStatus(
+        "firesdk",
+        "SDK Firestore",
+        "pending",
+        "Inicializando..."
+      );
+
+      try {
+        const config = await import("./assets/js/firebase-config.js");
+
+        auth = config.auth;
+        db = config.db;
+
+        if (!auth || !db) {
+          throw new Error(
+            "firebase-config.js no exportó auth y db."
+          );
+        }
+
+        setStatus(
+          "config",
+          "Configuración Firebase",
+          "ok",
+          "Firebase App se inicializó mediante el archivo compartido."
+        );
+
+        const [authModule, firestoreModule] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js")
+        ]);
+
+        signInWithEmailAndPassword =
+          authModule.signInWithEmailAndPassword;
+
+        getDoc = firestoreModule.getDoc;
+        doc = firestoreModule.doc;
+
+        setStatus(
+          "authsdk",
+          "SDK Authentication",
+          "ok",
+          "Funciones importadas correctamente."
+        );
+
+        setStatus(
+          "firesdk",
+          "SDK Firestore",
+          "ok",
+          "Funciones importadas correctamente."
+        );
+
+        setStatus(
+          "auth",
+          "Firebase Authentication",
+          "ok",
+          "Servicio inicializado. Falta probar las credenciales."
+        );
+
+        setStatus(
+          "firestore",
+          "Cloud Firestore",
+          "pending",
+          "Servicio inicializado. Falta comprobar una lectura."
+        );
+
+        initialized = true;
+        updateButton();
+        diagnosticButton.disabled = false;
+
+      } catch (error) {
+        console.error("[QR Médico] Error de inicialización:", error);
+
+        setStatus(
+          "config",
+          "Configuración Firebase",
+          "error",
+          errorDetails(error)
+        );
+
+        setStatus(
+          "authsdk",
+          "SDK Authentication",
+          "error",
+          "No se pudo cargar o inicializar."
+        );
+
+        setStatus(
+          "firesdk",
+          "SDK Firestore",
+          "error",
+          "No se pudo cargar o inicializar."
+        );
+
+        showMessage(
+          "No se pudo inicializar Firebase. Comprueba que el archivo " +
+          "assets/js/firebase-config.js esté publicado y que los módulos " +
+          "de Firebase puedan cargarse.\n\n" + errorDetails(error),
+          "error"
+        );
+
+        updateButton();
+      }
+    }
+
+    async function checkFirestore() {
+      if (checking) return;
+      checking = true;
+      diagnosticButton.disabled = true;
+      diagnosticButton.textContent = "Comprobando...";
+
+      try {
+        if (!db || !doc || !getDoc) {
+          throw new Error("Firestore no está inicializado.");
+        }
+
+        /*
+          Lectura inocua de un documento de diagnóstico.
+          No crea ni modifica documentos.
+        */
+        await getDoc(doc(db, "_diagnostics", "connection-check"));
+
+        setStatus(
+          "firestore",
+          "Cloud Firestore",
+          "ok",
+          "El servidor respondió a la lectura de prueba."
+        );
+
+      } catch (error) {
+        console.warn("[QR Médico] Prueba de Firestore:", error);
+
+        if (
+          error?.code === "permission-denied" ||
+          error?.code === "firestore/permission-denied"
+        ) {
+          setStatus(
+            "firestore",
+            "Cloud Firestore",
+            "warning",
+            "El servidor respondió, pero las reglas denegaron la lectura. " +
+            "La conexión puede funcionar aunque este documento no sea accesible.\n" +
+            errorDetails(error)
+          );
+        } else {
+          setStatus(
+            "firestore",
+            "Cloud Firestore",
+            "error",
+            explainError(error) + "\n" + errorDetails(error)
+          );
+        }
+      } finally {
+        checking = false;
+        diagnosticButton.disabled = false;
+        diagnosticButton.textContent = "Comprobar conexión";
+      }
+    }
+
+    diagnosticButton.addEventListener("click", checkFirestore);
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      clearMessage();
+
+      if (signingIn) return;
+
+      if (!initialized || !auth) {
+        showMessage(
+          "Firebase todavía no está listo. Revisa el diagnóstico técnico.",
+          "error"
+        );
+        return;
+      }
+
+      if (!form.reportValidity()) {
+        showMessage(
+          "Introduce un correo válido y tu contraseña.",
+          "error"
+        );
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage(
+          "Completa el correo electrónico y la contraseña.",
+          "error"
+        );
+        return;
+      }
+
+      signingIn = true;
+      updateButton();
+
+      setStatus(
+        "login",
+        "Inicio de sesión",
+        "pending",
+        "Enviando las credenciales a Firebase Authentication..."
+      );
+
+      try {
+        const credential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        setStatus(
+          "login",
+          "Inicio de sesión",
+          "ok",
+          "Autenticación correcta. UID: " + credential.user.uid
+        );
+
+        showMessage(
+          "¡Inicio de sesión correcto!\nAbriendo tu panel...",
+          "success"
+        );
+
+        loginButton.textContent = "Acceso correcto...";
+
+        setTimeout(() => {
+          window.location.replace("panel.html");
+        }, 900);
+
+      } catch (error) {
+        console.error("[QR Médico] Error de inicio de sesión:", error);
+
+        setStatus(
+          "login",
+          "Inicio de sesión",
+          "error",
+          explainError(error) + "\n" + errorDetails(error)
+        );
+
+        showMessage(
+          explainError(error) + "\n\n" + errorDetails(error),
+          "error"
+        );
+
+      } finally {
+        signingIn = false;
+        updateButton();
+      }
+    });
+
+    initialize();
+  </script>
+
+  <noscript>
+    <p style="margin:20px;padding:15px;background:#fee2e2;color:#991b1b">
+      JavaScript está desactivado. QR Médico necesita JavaScript para iniciar sesión.
+    </p>
+  </noscript>
+
 </body>
 </html>
