@@ -1,57 +1,766 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b5fff">
   <meta name="description" content="QR Médico: información médica de emergencia accesible mediante un código QR.">
+  <meta name="color-scheme" content="light">
   <title>QR Médico | Tu información, lista para una emergencia</title>
+
   <link rel="stylesheet" href="assets/css/styles.css">
+
+  <style>
+    /* Diagnóstico independiente del diseño principal */
+    #qr-diagnostics {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 16px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    #qr-diagnostics summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    #qr-diagnostics .diag-row {
+      padding: 9px 0;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    #qr-diagnostics .diag-row:last-child {
+      border-bottom: 0;
+    }
+
+    #qr-diagnostics .ok { color: #166534; }
+    #qr-diagnostics .error { color: #b91c1c; }
+    #qr-diagnostics .warning { color: #92400e; }
+    #qr-diagnostics .pending { color: #64748b; }
+
+    #qr-diagnostics button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: #fff;
+      color: #1e293b;
+      cursor: pointer;
+    }
+
+    #qr-diagnostics button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    #qr-diagnostics .diag-detail {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    #qr-global-message {
+      display: none;
+      max-width: 1100px;
+      margin: 16px auto;
+      padding: 14px;
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      background: #fee2e2;
+      color: #991b1b;
+      overflow-wrap: anywhere;
+    }
+
+    #qr-global-message.visible {
+      display: block;
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+      /* El color y el diseño principal siguen a cargo de styles.css. */
+      position: relative;
+    }
+
+    @media (max-width: 700px) {
+      #qr-diagnostics {
+        margin: 18px 14px;
+      }
+
+      #qr-global-message {
+        margin: 14px;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
 <header class="site-header">
-  <a class="brand" href="index.html" aria-label="QR Médico, inicio"><span class="brand-mark">+</span><span>QR <b>Médico</b></span></a>
-  <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-  <nav class="nav-links">
-    <a href="#como-funciona">Cómo funciona</a><a href="planes.html">Planes</a><a href="#privacidad">Privacidad</a>
+  <a class="brand" href="index.html" aria-label="QR Médico, inicio">
+    <span class="brand-mark">+</span>
+    <span>QR <b>Médico</b></span>
+  </a>
+
+  <button
+    class="menu-toggle"
+    type="button"
+    aria-label="Abrir menú"
+    aria-controls="main-navigation"
+    aria-expanded="false"
+  >☰</button>
+
+  <nav class="nav-links" id="main-navigation" aria-label="Navegación principal">
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="planes.html">Planes</a>
+    <a href="#privacidad">Privacidad</a>
   </nav>
-  <div class="nav-actions"><a class="btn btn-quiet" href="login.html">Iniciar sesión</a><a class="btn btn-primary" href="registro.html">Crear cuenta</a></div>
+
+  <div class="nav-actions">
+    <a class="btn btn-quiet" href="login.html">Iniciar sesión</a>
+    <a class="btn btn-primary" href="registro.html">Crear cuenta</a>
+  </div>
 </header>
-<main>
+
+<main id="contenido-principal">
+
+  <!-- PRESENTACIÓN -->
   <section class="hero container">
     <div class="hero-copy">
-      <span class="eyebrow"><span class="pulse"></span> Preparados para una emergencia</span>
-      <h1>Tu información médica,<br><span>cuando más importa.</span></h1>
-      <p class="lead">Un código QR puede ayudar a que otras personas consulten los datos de emergencia que tú decidas compartir. Para ti, tu familia y tus viajes.</p>
-      <div class="hero-actions"><a class="btn btn-primary btn-large" href="registro.html">Crear mi perfil <span aria-hidden="true">→</span></a><a class="btn btn-outline btn-large" href="#como-funciona">Ver cómo funciona</a></div>
-      <div class="trust-row"><span>✓ Perfiles individuales</span><span>✓ Tú decides qué mostrar</span><span>✓ Sin registro para escanear</span></div>
-    </div>
-    <div class="hero-art" aria-label="Ilustración de una ficha médica con código QR">
-      <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-      <div class="medical-card">
-        <div class="card-top"><span class="mini-mark">+</span><span class="secure-label">FICHA DE EMERGENCIA</span><span class="status-dot"></span></div>
-        <div class="profile-row"><div class="avatar">DM</div><div><div class="skeleton name-line">Perfil médico</div><div class="muted small">Información autorizada</div></div></div>
-        <div class="info-lines"><div><span class="info-icon">✚</span><span><b>Alergias</b><small>Según el perfil registrado</small></span></div><div><span class="info-icon">♡</span><span><b>Contactos de emergencia</b><small>Acceso rápido a contactos</small></span></div></div>
-        <div class="qr-panel"><div class="fake-qr" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><b>Escanea para consultar</b><small>Solo datos autorizados</small><span class="pill">QR individual</span></div></div>
+      <span class="eyebrow">
+        <span class="pulse"></span>
+        Preparados para una emergencia
+      </span>
+
+      <h1>
+        Tu información médica,<br>
+        <span>cuando más importa.</span>
+      </h1>
+
+      <p class="lead">
+        Un código QR puede ayudar a que otras personas consulten los datos
+        de emergencia que tú decidas compartir. Para ti, tu familia y tus viajes.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-large" href="registro.html">
+          Crear mi perfil <span aria-hidden="true">→</span>
+        </a>
+
+        <a class="btn btn-outline btn-large" href="#como-funciona">
+          Ver cómo funciona
+        </a>
       </div>
-      <div class="floating-badge"><span class="badge-icon">✓</span><span><b>Tu información, tu decisión</b><small>Control de visibilidad</small></span></div>
-      <div class="decor decor-cross">+</div><div class="decor decor-dots">•••<br>•••<br>•••</div>
+
+      <div class="trust-row">
+        <span>✓ Perfiles individuales</span>
+        <span>✓ Tú decides qué mostrar</span>
+        <span>✓ Sin registro para escanear</span>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-label="Ilustración de una ficha médica con código QR">
+      <div class="orbit orbit-one"></div>
+      <div class="orbit orbit-two"></div>
+
+      <div class="medical-card">
+        <div class="card-top">
+          <span class="mini-mark">+</span>
+          <span class="secure-label">FICHA DE EMERGENCIA</span>
+          <span class="status-dot"></span>
+        </div>
+
+        <div class="profile-row">
+          <div class="avatar">DM</div>
+          <div>
+            <div class="skeleton name-line">Perfil médico</div>
+            <div class="muted small">Información autorizada</div>
+          </div>
+        </div>
+
+        <div class="info-lines">
+          <div>
+            <span class="info-icon">✚</span>
+            <span>
+              <b>Alergias</b>
+              <small>Según el perfil registrado</small>
+            </span>
+          </div>
+
+          <div>
+            <span class="info-icon">♡</span>
+            <span>
+              <b>Contactos de emergencia</b>
+              <small>Acceso rápido a contactos</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="qr-panel">
+          <div class="fake-qr" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i>
+          </div>
+
+          <div>
+            <b>Escanea para consultar</b>
+            <small>Solo datos autorizados</small>
+            <span class="pill">QR individual</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="floating-badge">
+        <span class="badge-icon">✓</span>
+        <span>
+          <b>Tu información, tu decisión</b>
+          <small>Control de visibilidad</small>
+        </span>
+      </div>
+
+      <div class="decor decor-cross">+</div>
+      <div class="decor decor-dots">•••<br>•••<br>•••</div>
     </div>
   </section>
-  <section class="stats-strip"><div class="container stats-grid"><div><strong>1 QR</strong><span>por cada perfil</span></div><div><strong>Tu control</strong><span>de la información visible</span></div><div><strong>Acceso rápido</strong><span>desde la cámara del teléfono</span></div></div></section>
+
+  <!-- VENTAJAS -->
+  <section class="stats-strip" aria-label="Ventajas de QR Médico">
+    <div class="container stats-grid">
+      <div>
+        <strong>1 QR</strong>
+        <span>por cada perfil</span>
+      </div>
+
+      <div>
+        <strong>Tu control</strong>
+        <span>de la información visible</span>
+      </div>
+
+      <div>
+        <strong>Acceso rápido</strong>
+        <span>desde la cámara del teléfono</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
   <section class="section container" id="como-funciona">
-    <div class="section-heading"><span class="eyebrow">SENCILLO Y PRÁCTICO</span><h2>¿Cómo funciona QR Médico?</h2><p>Una forma clara de compartir información importante sin imprimir todos tus datos médicos en el código.</p></div>
+    <div class="section-heading">
+      <span class="eyebrow">SENCILLO Y PRÁCTICO</span>
+      <h2>¿Cómo funciona QR Médico?</h2>
+      <p>
+        Una forma clara de compartir información importante sin imprimir
+        todos tus datos médicos en el código.
+      </p>
+    </div>
+
     <div class="steps-grid">
-      <article class="step-card"><span class="step-number">01</span><div class="step-icon">♙</div><h3>Crea tu perfil</h3><p>Registra los datos médicos relevantes y los contactos que podrían ayudar en una emergencia.</p></article>
-      <article class="step-card"><span class="step-number">02</span><div class="step-icon">☑</div><h3>Elige qué compartir</h3><p>Define qué información podrá verse públicamente al abrir la ficha de emergencia.</p></article>
-      <article class="step-card"><span class="step-number">03</span><div class="step-icon">▦</div><h3>Usa tu código QR</h3><p>Descarga o imprime tu QR. Al escanearlo, se abre la página con los datos autorizados.</p></article>
+      <article class="step-card">
+        <span class="step-number">01</span>
+        <div class="step-icon" aria-hidden="true">♙</div>
+        <h3>Crea tu perfil</h3>
+        <p>
+          Registra los datos médicos relevantes y los contactos que podrían
+          ayudar en una emergencia.
+        </p>
+      </article>
+
+      <article class="step-card">
+        <span class="step-number">02</span>
+        <div class="step-icon" aria-hidden="true">☑</div>
+        <h3>Elige qué compartir</h3>
+        <p>
+          Define qué información podrá verse públicamente al abrir la ficha
+          de emergencia.
+        </p>
+      </article>
+
+      <article class="step-card">
+        <span class="step-number">03</span>
+        <div class="step-icon" aria-hidden="true">▦</div>
+        <h3>Usa tu código QR</h3>
+        <p>
+          Descarga o imprime tu QR. Al escanearlo, se abre la página con
+          los datos autorizados.
+        </p>
+      </article>
     </div>
   </section>
-  <section class="section soft-section" id="privacidad"><div class="container privacy-layout"><div><span class="eyebrow">PRIVACIDAD DESDE EL DISEÑO</span><h2>Tú decides qué información se comparte.</h2><p class="lead-small">El código QR no contiene directamente tus datos médicos. Dirige a una página segura que consulta el perfil correspondiente y muestra únicamente los campos autorizados.</p><a class="plans-highlight" href="planes.html">
-  Conoce los planes <span class="arrow" aria-hidden="true">→</span>
-</a></div><div class="privacy-list"><div><span class="check">✓</span><div><b>Perfiles separados</b><p>Cada familiar puede tener su propia ficha y su propio QR.</p></div></div><div><span class="check">✓</span><div><b>Información seleccionada</b><p>Solo se mostrarán los campos que el titular haya autorizado.</p></div></div><div><span class="check">✓</span><div><b>Control del código</b><p>El diseño contempla desactivar o reemplazar un QR comprometido.</p></div></div><p class="disclaimer">QR Médico es una herramienta para compartir información proporcionada por el usuario. No sustituye la atención médica ni verifica clínicamente los datos.</p></div></div></section>
-  <section class="cta-section container"><div><span class="eyebrow">DA EL PRIMER PASO</span><h2>Prepara tu ficha de emergencia.</h2><p>Organiza tu información y la de tu familia en un solo lugar.</p></div><a class="btn btn-light btn-large" href="registro.html">Comenzar ahora <span>→</span></a></section>
+
+  <!-- PRIVACIDAD -->
+  <section class="section soft-section" id="privacidad">
+    <div class="container privacy-layout">
+      <div>
+        <span class="eyebrow">PRIVACIDAD DESDE EL DISEÑO</span>
+
+        <h2>Tú decides qué información se comparte.</h2>
+
+        <p class="lead-small">
+          El código QR no contiene directamente tus datos médicos.
+          Dirige a una página que debe consultar el perfil correspondiente
+          y mostrar únicamente los campos autorizados.
+        </p>
+
+        <a class="plans-highlight" href="planes.html">
+          Conoce los planes
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="privacy-list">
+        <div>
+          <span class="check" aria-hidden="true">✓</span>
+          <div>
+            <b>Perfiles separados</b>
+            <p>Cada familiar puede tener su propia ficha y su propio QR.</p>
+          </div>
+        </div>
+
+        <div>
+          <span class="check" aria-hidden="true">✓</span>
+          <div>
+            <b>Información seleccionada</b>
+            <p>Solo se mostrarán los campos que el titular haya autorizado.</p>
+          </div>
+        </div>
+
+        <div>
+          <span class="check" aria-hidden="true">✓</span>
+          <div>
+            <b>Control del código</b>
+            <p>El diseño contempla desactivar o reemplazar un QR comprometido.</p>
+          </div>
+        </div>
+
+        <p class="disclaimer">
+          QR Médico es una herramienta para compartir información
+          proporcionada por el usuario. No sustituye la atención médica
+          ni verifica clínicamente los datos.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LLAMADA A LA ACCIÓN -->
+  <section class="cta-section container">
+    <div>
+      <span class="eyebrow">DA EL PRIMER PASO</span>
+      <h2>Prepara tu ficha de emergencia.</h2>
+      <p>Organiza tu información y la de tu familia en un solo lugar.</p>
+    </div>
+
+    <a class="btn btn-light btn-large" href="registro.html">
+      Comenzar ahora <span aria-hidden="true">→</span>
+    </a>
+  </section>
+
 </main>
-<footer class="site-footer"><div class="container footer-inner"><a class="brand brand-footer" href="index.html"><span class="brand-mark">+</span><span>QR <b>Médico</b></span></a><span>© 2026 QR Médico · Información de emergencia bajo tu control.</span><div><a href="planes.html">Planes</a><a href="login.html">Iniciar sesión</a></div></div></footer>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <a class="brand brand-footer" href="index.html">
+      <span class="brand-mark">+</span>
+      <span>QR <b>Médico</b></span>
+    </a>
+
+    <span>
+      © 2026 QR Médico · Información de emergencia bajo tu control.
+    </span>
+
+    <div>
+      <a href="planes.html">Planes</a>
+      <a href="login.html">Iniciar sesión</a>
+    </div>
+  </div>
+</footer>
+
+<!-- MENSAJE GENERAL DE ERRORES -->
+<div
+  id="qr-global-message"
+  role="alert"
+  aria-live="assertive"
+></div>
+
+<!-- DIAGNÓSTICO -->
+<section id="qr-diagnostics" aria-label="Diagnóstico técnico">
+  <details>
+    <summary>Diagnóstico técnico de QR Médico</summary>
+
+    <div id="qr-diagnostic-results" aria-live="polite">
+      <div class="diag-row pending">Iniciando comprobaciones...</div>
+    </div>
+
+    <button id="qr-check-links" type="button">
+      Revisar enlaces internos
+    </button>
+
+    <p>
+      <small>
+        El diagnóstico verifica la página, sus recursos y sus enlaces.
+        No confirma que el registro, los pagos o la base de datos estén
+        completamente operativos.
+      </small>
+    </p>
+  </details>
+</section>
+
+<!-- CONTROL DE ERRORES Y NAVEGACIÓN -->
+<script>
+(function () {
+  "use strict";
+
+  const results = document.getElementById("qr-diagnostic-results");
+  const globalMessage = document.getElementById("qr-global-message");
+  const menuButton = document.querySelector(".menu-toggle");
+  const navigation = document.getElementById("main-navigation");
+  const linkButton = document.getElementById("qr-check-links");
+
+  const states = new Map();
+
+  function report(id, title, status, detail) {
+    states.set(id, { title, status, detail });
+    render();
+  }
+
+  function render() {
+    results.replaceChildren();
+
+    for (const [id, item] of states) {
+      const row = document.createElement("div");
+      row.className = "diag-row " + item.status;
+
+      const title = document.createElement("strong");
+      const icon = {
+        ok: "✔",
+        error: "✖",
+        warning: "⚠",
+        pending: "⏳"
+      }[item.status] || "•";
+
+      title.textContent = icon + " " + item.title;
+
+      const detail = document.createElement("span");
+      detail.className = "diag-detail";
+      detail.textContent = item.detail || "";
+
+      row.append(title, detail);
+      results.appendChild(row);
+    }
+  }
+
+  function showGlobalError(text) {
+    globalMessage.textContent = text;
+    globalMessage.classList.add("visible");
+  }
+
+  function hideGlobalError() {
+    globalMessage.textContent = "";
+    globalMessage.classList.remove("visible");
+  }
+
+  // Comprobación de ejecución.
+  report(
+    "javascript",
+    "JavaScript",
+    "ok",
+    "El sistema de diagnóstico está funcionando."
+  );
+
+  // Comprobar CSS sin bloquear el contenido si falla.
+  const cssLink = document.querySelector(
+    'link[rel="stylesheet"][href="assets/css/styles.css"]'
+  );
+
+  if (cssLink) {
+    cssLink.addEventListener("load", function () {
+      report(
+        "css",
+        "Hoja de estilos",
+        "ok",
+        "assets/css/styles.css se cargó correctamente."
+      );
+    });
+
+    cssLink.addEventListener("error", function () {
+      report(
+        "css",
+        "Hoja de estilos",
+        "error",
+        "No se pudo cargar assets/css/styles.css. Revisa la ruta y el nombre."
+      );
+
+      showGlobalError(
+        "No se pudo cargar el diseño principal. La página puede verse diferente. " +
+        "Comprueba que exista assets/css/styles.css en GitHub."
+      );
+    });
+
+    // Si el navegador ya cargó la hoja, normalmente tendrá una hoja asociada.
+    if (cssLink.sheet) {
+      report(
+        "css",
+        "Hoja de estilos",
+        "ok",
+        "La hoja de estilos está disponible."
+      );
+    } else {
+      report(
+        "css",
+        "Hoja de estilos",
+        "pending",
+        "Esperando la respuesta del navegador."
+      );
+    }
+  } else {
+    report(
+      "css",
+      "Hoja de estilos",
+      "error",
+      "No se encontró el enlace a styles.css."
+    );
+  }
+
+  // Menú móvil: se añaden ambas clases para ser compatible con estilos
+  // que utilicen .open o .is-open.
+  if (menuButton && navigation) {
+    menuButton.addEventListener("click", function () {
+      const opening =
+        menuButton.getAttribute("aria-expanded") !== "true";
+
+      menuButton.setAttribute("aria-expanded", String(opening));
+      menuButton.setAttribute(
+        "aria-label",
+        opening ? "Cerrar menú" : "Abrir menú"
+      );
+
+      navigation.classList.toggle("open", opening);
+      navigation.classList.toggle("is-open", opening);
+    });
+
+    navigation.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Abrir menú");
+        navigation.classList.remove("open", "is-open");
+      });
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Abrir menú");
+        navigation.classList.remove("open", "is-open");
+        menuButton.focus();
+      }
+    });
+
+    report(
+      "menu",
+      "Navegación",
+      "ok",
+      "El control del menú móvil está instalado."
+    );
+  } else {
+    report(
+      "menu",
+      "Navegación",
+      "error",
+      "No se encontró el botón del menú o la navegación principal."
+    );
+  }
+
+  // Verificar que los enlaces internos apunten a una página o sección
+  // existente. No realiza solicitudes de red ni modifica archivos.
+  async function checkInternalLinks() {
+    linkButton.disabled = true;
+    linkButton.textContent = "Revisando enlaces...";
+
+    try {
+      const links = Array.from(
+        document.querySelectorAll("a[href]")
+      );
+
+      const failures = [];
+      const checked = new Set();
+
+      for (const link of links) {
+        const raw = link.getAttribute("href");
+
+        if (
+          !raw ||
+          raw.startsWith("mailto:") ||
+          raw.startsWith("tel:") ||
+          raw.startsWith("javascript:")
+        ) {
+          continue;
+        }
+
+        let url;
+
+        try {
+          url = new URL(raw, window.location.href);
+        } catch {
+          failures.push("Enlace no válido: " + raw);
+          continue;
+        }
+
+        if (url.origin !== window.location.origin) {
+          continue;
+        }
+
+        const key = url.pathname + url.search + url.hash;
+
+        if (checked.has(key)) {
+          continue;
+        }
+
+        checked.add(key);
+
+        // Solo se verifican secciones de la página actual.
+        if (
+          url.pathname === window.location.pathname &&
+          url.hash
+        ) {
+          let id;
+
+          try {
+            id = decodeURIComponent(url.hash.slice(1));
+          } catch {
+            failures.push("Ancla no válida: " + raw);
+            continue;
+          }
+
+          if (!document.getElementById(id)) {
+            failures.push("No existe la sección " + url.hash);
+          }
+        }
+
+        // Las páginas distintas se reportan como enlaces por revisar:
+        // no se afirma que existan sin consultar el servidor.
+      }
+
+      if (failures.length === 0) {
+        report(
+          "links",
+          "Enlaces y secciones",
+          "ok",
+          "Se revisaron los enlaces internos de la página. " +
+          "Los enlaces a otras páginas se muestran como destinos, " +
+          "pero su existencia en el servidor no se ha confirmado."
+        );
+      } else {
+        report(
+          "links",
+          "Enlaces y secciones",
+          "error",
+          failures.join("\n")
+        );
+
+        showGlobalError(
+          "Se detectaron enlaces o secciones que necesitan revisión. " +
+          "Consulta el diagnóstico técnico."
+        );
+      }
+    } catch (error) {
+      console.error("[QR Médico] Error revisando enlaces:", error);
+
+      report(
+        "links",
+        "Enlaces y secciones",
+        "error",
+        error.message || String(error)
+      );
+    } finally {
+      linkButton.disabled = false;
+      linkButton.textContent = "Revisar enlaces internos";
+    }
+  }
+
+  linkButton.addEventListener("click", checkInternalLinks);
+
+  // Errores de JavaScript no capturados.
+  window.addEventListener("error", function (event) {
+    if (
+      event.target &&
+      event.target !== window &&
+      (event.target.tagName === "SCRIPT" ||
+       event.target.tagName === "LINK")
+    ) {
+      const resource = event.target.src || event.target.href || "recurso desconocido";
+
+      report(
+        "resource-" + resource,
+        "Carga de recurso",
+        "error",
+        "No se pudo cargar: " + resource
+      );
+      return;
+    }
+
+    const detail = [
+      event.message || "Error JavaScript desconocido.",
+      event.filename ? "Archivo: " + event.filename : "",
+      event.lineno ? "Línea: " + event.lineno : ""
+    ].filter(Boolean).join("\n");
+
+    report("runtime", "Error de JavaScript", "error", detail);
+
+    showGlobalError(
+      "Se produjo un error de JavaScript. Abre el diagnóstico técnico " +
+      "para consultar el detalle."
+    );
+
+    console.error("[QR Médico] Error JavaScript:", event);
+  });
+
+  window.addEventListener("unhandledrejection", function (event) {
+    const reason = event.reason;
+    const detail = reason?.message || String(reason);
+
+    report(
+      "promise",
+      "Error de operación asíncrona",
+      "error",
+      detail
+    );
+
+    showGlobalError(
+      "Una operación no terminó correctamente. Consulta el diagnóstico técnico."
+    );
+
+    console.error("[QR Médico] Promesa rechazada:", reason);
+  });
+
+  // Confirmar que la página ya tiene contenido.
+  if (document.getElementById("contenido-principal")) {
+    report(
+      "content",
+      "Contenido principal",
+      "ok",
+      "Las secciones principales están presentes en el documento."
+    );
+  } else {
+    report(
+      "content",
+      "Contenido principal",
+      "error",
+      "No se encontró el contenedor principal."
+    );
+  }
+})();
+</script>
+
+<!-- IMPORTANTE:
+     app.js contiene importaciones de Firebase, por lo que debe cargarse
+     como módulo. Si falla, la página pública seguirá mostrando su contenido. -->
 <script type="module" src="assets/js/app.js"></script>
 
-</body></html>
+</body>
+</html>
