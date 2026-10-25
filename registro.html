@@ -1,90 +1,1042 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b5fff">
-  <meta name="description" content="Crea tu cuenta de QR Médico.">
+  <meta name="description" content="Registro seguro de QR Médico">
   <title>Crear cuenta | QR Médico</title>
+
   <link rel="stylesheet" href="assets/css/styles.css">
-  <script type="module" src="assets/js/app.js"></script>
-</head><body class="auth-body"><a class="brand auth-brand" href="index.html"
-aria-label="QR Médico, inicio">
-<span class="brand-mark">+</span>
-<span>QR <b>Médico</b></span>
-</a>
 
-  <main class="auth-card"><a class="back-link" href="index.html">← Volver al inicio</a>
+  <style>
+    /* Diagnóstico y formulario: estilos independientes de styles.css */
+    .diagnostic {
+      margin: 20px 0;
+      padding: 16px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 14px;
+    }
 
-<span class="eyebrow">EMPIEZA AQUÍ</span>
+    .diagnostic h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
 
-<h1>Crea tu cuenta</h1>
+    .diag-item {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 7px 0;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+    }
 
-<p>Prepara tu espacio para administrar tus perfiles médicos.</p>
+    .diag-item:last-child {
+      border-bottom: 0;
+    }
 
-<form id="register-form" class="demo-form" novalidate>
+    .diag-icon {
+      flex-shrink: 0;
+      font-weight: bold;
+    }
 
-  <label for="name">Nombre completo</label>
-  <input
-    id="name"
-    name="name"
-    type="text"
-    autocomplete="name"
-    placeholder="Tu nombre completo"
-    required
-  >
+    .diag-pending { color: #64748b; }
+    .diag-ok { color: #15803d; }
+    .diag-error { color: #b91c1c; }
+    .diag-warn { color: #a16207; }
 
-  <label for="email">Correo electrónico</label>
-  <input
-    id="email"
-    name="email"
-    type="email"
-    autocomplete="email"
-    placeholder="tu@correo.com"
-    required
-  >
+    .form-message {
+      display: none;
+      margin: 16px 0;
+      padding: 14px;
+      border-radius: 12px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
-  <label for="password">Crear contraseña</label>
-  <input
-    id="password"
-    name="password"
-    type="password"
-    autocomplete="new-password"
-    minlength="8"
-    placeholder="Mínimo 8 caracteres"
-    required
-  >
+    .form-message.visible { display: block; }
 
-  <label class="consent">
-    <input type="checkbox" name="consent" required>
-    <span>
-      Confirmo que revisaré y aceptaré las condiciones y la política
-      de privacidad antes de utilizar el servicio.
-    </span>
-  </label>
+    .form-message[data-type="success"] {
+      display: block;
+      color: #166534;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+    }
 
-  <button
-    id="register-button"
-    class="btn btn-primary full"
-    type="submit"
-  >
-    Crear cuenta
-  </button>
+    .form-message[data-type="error"] {
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+    }
 
-  <p
-    id="form-message"
-    class="form-note"
-    role="status"
-    aria-live="polite"
-  ></p>
+    .form-message[data-type="info"] {
+      color: #1e40af;
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
+    }
 
-</form>
+    .diagnostic button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: white;
+      color: #1e293b;
+      cursor: pointer;
+    }
 
-<div class="auth-bottom">
-  ¿Ya tienes cuenta?
-  <a href="login.html">Iniciar sesión</a>
-</div>
+    .diagnostic button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
 
-  </main></body>
-</html>
+    #register-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 18px;
+    }
+
+    #register-button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .technical-detail {
+      display: block;
+      margin-top: 7px;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .small-note {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body class="auth-body">
+
+  <a class="brand auth-brand"
+     href="index.html"
+     aria-label="QR Médico, inicio">
+    <span class="brand-mark">+</span>
+    <span>QR <b>Médico</b></span>
+  </a>
+
+  <main class="auth-card">
+
+    <a class="back-link" href="index.html">
+      ← Volver al inicio
+    </a>
+
+    <span class="eyebrow">REGISTRO SEGURO</span>
+
+    <h1>Crea tu cuenta</h1>
+
+    <p>
+      Prepara tu espacio para administrar tus perfiles médicos.
+    </p>
+
+    <!-- DIAGNÓSTICO VISIBLE -->
+    <section class="diagnostic"
+             aria-labelledby="diagnostic-title">
+
+      <h2 id="diagnostic-title">
+        Diagnóstico del sistema
+      </h2>
+
+      <div id="diagnostic-list" aria-live="polite">
+
+        <div class="diag-item diag-pending">
+          <span class="diag-icon">⏳</span>
+          <span>Esperando el inicio de JavaScript...</span>
+        </div>
+
+      </div>
+
+      <button id="diagnostic-button" type="button">
+        Volver a comprobar conexión
+      </button>
+
+      <p class="small-note">
+        Las pruebas de conexión no crean cuentas ni modifican datos.
+        La prueba de escritura en Firestore se realiza durante el registro.
+      </p>
+    </section>
+
+    <!-- MENSAJES DE RESULTADO Y ERROR -->
+    <div id="form-message"
+         class="form-message"
+         role="status"
+         aria-live="polite"></div>
+
+    <!-- FORMULARIO -->
+    <form id="register-form">
+
+      <label for="name">Nombre completo</label>
+
+      <input
+        id="name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        placeholder="Tu nombre completo"
+        minlength="2"
+        maxlength="100"
+        required
+      >
+
+      <label for="email">Correo electrónico</label>
+
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        placeholder="tu@correo.com"
+        maxlength="254"
+        required
+      >
+
+      <label for="password">Crear contraseña</label>
+
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        minlength="8"
+        maxlength="128"
+        placeholder="Mínimo 8 caracteres"
+        required
+      >
+
+      <label class="consent">
+        <input
+          id="consent"
+          name="consent"
+          type="checkbox"
+          required
+        >
+
+        <span>
+          Confirmo que revisaré y aceptaré las condiciones y la
+          política de privacidad antes de utilizar el servicio.
+        </span>
+      </label>
+
+      <button
+        id="register-button"
+        class="btn btn-primary full"
+        type="submit"
+        disabled
+      >
+        Comprobando Firebase...
+      </button>
+
+      <p class="small-note">
+        El registro utiliza Firebase Authentication y guarda el
+        perfil básico en Cloud Firestore. No introduzcas información
+        médica real durante las pruebas.
+      </p>
+
+    </form>
+
+    <div class="auth-bottom">
+      ¿Ya tienes cuenta?
+      <a href="login.html">Iniciar sesión</a>
+    </div>
+
+  </main>
+
+  <!--
+    Este archivo contiene su propio módulo de registro.
+    No depende de assets/js/app.js para ejecutar el formulario.
+  -->
+
+  <script>
+    /*
+      Este mensaje ayuda a detectar si JavaScript no se ejecuta.
+      El módulo de Firebase actualizará el diagnóstico después.
+    */
+    window.__QR_MEDICO_REGISTRATION_SCRIPT_LOADED__ = true;
+
+    window.addEventListener("error", function (event) {
+      const list = document.getElementById("diagnostic-list");
+
+      if (!list) return;
+
+      const item = document.createElement("div");
+      item.className = "diag-item diag-error";
+
+      const icon = document.createElement("span");
+      icon.className = "diag-icon";
+      icon.textContent = "✖";
+
+      const message = document.createElement("span");
+      message.textContent =
+        "Error de JavaScript: " +
+        (event.message || "Error no identificado") +
+        (event.filename
+          ? " | Archivo: " + event.filename.split("/").pop()
+          : "") +
+        (event.lineno ? " | Línea: " + event.lineno : "");
+
+      item.append(icon, message);
+      list.appendChild(item);
+    });
+
+    window.addEventListener("unhandledrejection", function (event) {
+      const message = document.getElementById("form-message");
+
+      if (!message) return;
+
+      message.dataset.type = "error";
+      message.classList.add("visible");
+      message.textContent =
+        "Error inesperado de JavaScript: " +
+        (event.reason?.message || String(event.reason));
+    });
+  </script>
+
+  <script type="module">
+    const $ = id => document.getElementById(id);
+
+    const diagnosticList = $("diagnostic-list");
+    const registerForm = $("register-form");
+    const registerButton = $("register-button");
+    const diagnosticButton = $("diagnostic-button");
+    const formMessage = $("form-message");
+
+    let firebaseApp = null;
+    let auth = null;
+    let db = null;
+
+    let createUserWithEmailAndPassword = null;
+    let updateProfile = null;
+    let doc = null;
+    let setDoc = null;
+    let serverTimestamp = null;
+    let getDoc = null;
+
+    let initializationError = null;
+    let diagnosticRunning = false;
+    let registrationRunning = false;
+    let authReady = false;
+    let firestoreSdkReady = false;
+
+    const diagnosticResults = new Map();
+
+    function setDiagnostic(id, title, status, detail = "") {
+      diagnosticResults.set(id, { title, status, detail });
+      renderDiagnostics();
+    }
+
+    function renderDiagnostics() {
+      diagnosticList.replaceChildren();
+
+      const entries = [
+        ["javascript", "JavaScript"],
+        ["authsdk", "SDK de Firebase Authentication"],
+        ["firesdk", "SDK de Cloud Firestore"],
+        ["config", "Configuración del proyecto Firebase"],
+        ["auth", "Firebase Authentication"],
+        ["firestore", "Cloud Firestore"],
+        ["network", "Conexión a internet"],
+        ["registration", "Registro de cuenta"],
+        ["profile", "Documento del usuario en Firestore"]
+      ];
+
+      for (const [id, title] of entries) {
+        const result = diagnosticResults.get(id) || {
+          title,
+          status: "pending",
+          detail: "Pendiente"
+        };
+
+        const item = document.createElement("div");
+        item.className = "diag-item diag-" + result.status;
+
+        const icon = document.createElement("span");
+        icon.className = "diag-icon";
+
+        icon.textContent = ({
+          ok: "✔",
+          error: "✖",
+          warn: "⚠",
+          pending: "⏳"
+        })[result.status] || "•";
+
+        const text = document.createElement("span");
+        text.appendChild(document.createTextNode(
+          result.title + ": " + result.detail
+        ));
+
+        item.append(icon, text);
+        diagnosticList.appendChild(item);
+      }
+    }
+
+    function showMessage(text, type = "error") {
+      formMessage.dataset.type = type;
+      formMessage.classList.add("visible");
+      formMessage.textContent = text;
+    }
+
+    function clearMessage() {
+      formMessage.classList.remove("visible");
+      formMessage.textContent = "";
+    }
+
+    function technicalError(error) {
+      return [
+        error?.code ? "Código: " + error.code : "",
+        error?.message ? "Detalle: " + error.message : ""
+      ].filter(Boolean).join("\n");
+    }
+
+    function explainFirebaseError(error) {
+      const code = error?.code || "";
+
+      const messages = {
+        "auth/email-already-in-use":
+          "Este correo ya está registrado. Intenta iniciar sesión.",
+
+        "auth/invalid-email":
+          "El formato del correo electrónico no es válido.",
+
+        "auth/weak-password":
+          "Firebase rechazó la contraseña. Prueba una más segura.",
+
+        "auth/operation-not-allowed":
+          "El método Correo electrónico/contraseña no está habilitado en Firebase Authentication.",
+
+        "auth/network-request-failed":
+          "Firebase no pudo conectar. Revisa internet y vuelve a intentarlo.",
+
+        "auth/too-many-requests":
+          "Firebase limitó temporalmente los intentos. Espera antes de volver a probar.",
+
+        "auth/invalid-api-key":
+          "La API key de Firebase no es válida.",
+
+        "auth/app-not-authorized":
+          "El dominio o la aplicación no está autorizado para esta operación.",
+
+        "permission-denied":
+          "Firestore denegó el acceso. Revisa las reglas de seguridad.",
+
+        "unavailable":
+          "Firestore no está disponible temporalmente. Comprueba tu conexión.",
+
+        "failed-precondition":
+          "Firestore necesita una configuración adicional o no está listo.",
+
+        "unauthenticated":
+          "Firestore recibió la solicitud sin una sesión válida.",
+
+        "already-exists":
+          "El documento que se intenta crear ya existe."
+      };
+
+      return messages[code] ||
+        "Se produjo un error. Consulta el código técnico para identificarlo.";
+    }
+
+    function isNetworkError(error) {
+      const code = error?.code || "";
+      const message = error?.message || "";
+
+      return code.includes("network") ||
+        code === "unavailable" ||
+        /failed to fetch|networkerror|load failed/i.test(message);
+    }
+
+    function setButtonState() {
+      registerButton.disabled =
+        !authReady ||
+        !firestoreSdkReady ||
+        registrationRunning;
+
+      if (registrationRunning) {
+        registerButton.textContent = "Creando cuenta...";
+      } else if (!authReady || !firestoreSdkReady) {
+        registerButton.textContent = "Firebase no está listo";
+      } else {
+        registerButton.textContent = "Crear cuenta";
+      }
+    }
+
+    /*
+      1. Cargar los SDK de Firebase.
+      Los errores de importación quedan registrados.
+    */
+    setDiagnostic(
+      "javascript",
+      "JavaScript",
+      "ok",
+      "El módulo de registro se está ejecutando."
+    );
+
+    setDiagnostic(
+      "authsdk",
+      "SDK de Firebase Authentication",
+      "pending",
+      "Importando módulo..."
+    );
+
+    setDiagnostic(
+      "firesdk",
+      "SDK de Cloud Firestore",
+      "pending",
+      "Importando módulo..."
+    );
+
+    async function initializeFirebase() {
+      try {
+        const [
+          appModule,
+          authModule,
+          firestoreModule
+        ] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js")
+        ]);
+
+        setDiagnostic(
+          "authsdk",
+          "SDK de Firebase Authentication",
+          "ok",
+          "Importado correctamente."
+        );
+
+        setDiagnostic(
+          "firesdk",
+          "SDK de Cloud Firestore",
+          "ok",
+          "Importado correctamente."
+        );
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD1S9r4Qq0jalpiVvPGi3eikrx8aPlV-Nk",
+          authDomain: "qr-medico-710e7.firebaseapp.com",
+          projectId: "qr-medico-710e7",
+          storageBucket: "qr-medico-710e7.firebasestorage.app",
+          messagingSenderId: "219302916943",
+          appId: "1:219302916943:web:1237a62d7f1468f1818b3a"
+        };
+
+        setDiagnostic(
+          "config",
+          "Configuración del proyecto Firebase",
+          "pending",
+          "Validando configuración..."
+        );
+
+        if (
+          !firebaseConfig.apiKey ||
+          !firebaseConfig.projectId ||
+          !firebaseConfig.authDomain ||
+          !firebaseConfig.appId
+        ) {
+          throw new Error(
+            "Faltan propiedades obligatorias en firebaseConfig."
+          );
+        }
+
+        firebaseApp = appModule.initializeApp(firebaseConfig);
+
+        auth = authModule.getAuth(firebaseApp);
+
+        db = firestoreModule.getFirestore(firebaseApp);
+
+        createUserWithEmailAndPassword =
+          authModule.createUserWithEmailAndPassword;
+
+        updateProfile = authModule.updateProfile;
+
+        doc = firestoreModule.doc;
+        setDoc = firestoreModule.setDoc;
+        serverTimestamp = firestoreModule.serverTimestamp;
+        getDoc = firestoreModule.getDoc;
+
+        if (!auth || !db) {
+          throw new Error(
+            "Firebase no devolvió los servicios Authentication y Firestore."
+          );
+        }
+
+        setDiagnostic(
+          "config",
+          "Configuración del proyecto Firebase",
+          "ok",
+          "Proyecto: " + firebaseConfig.projectId
+        );
+
+        setDiagnostic(
+          "auth",
+          "Firebase Authentication",
+          "ok",
+          "SDK inicializado. La autenticación real se comprobará al registrar."
+        );
+
+        setDiagnostic(
+          "firestore",
+          "Cloud Firestore",
+          "pending",
+          "SDK inicializado; falta comprobar una operación real."
+        );
+
+        authReady = true;
+        firestoreSdkReady = true;
+
+        setButtonState();
+
+        await runDiagnostics();
+
+      } catch (error) {
+        initializationError = error;
+        authReady = false;
+        firestoreSdkReady = false;
+
+        setDiagnostic(
+          "authsdk",
+          "SDK de Firebase Authentication",
+          "error",
+          "No se pudo cargar: " + (error.message || String(error))
+        );
+
+        setDiagnostic(
+          "firesdk",
+          "SDK de Cloud Firestore",
+          "error",
+          "No se pudo inicializar correctamente."
+        );
+
+        setDiagnostic(
+          "config",
+          "Configuración del proyecto Firebase",
+          "error",
+          "Error de inicialización: " +
+            (error.message || String(error))
+        );
+
+        setDiagnostic(
+          "auth",
+          "Firebase Authentication",
+          "error",
+          "No se pudo inicializar."
+        );
+
+        setDiagnostic(
+          "firestore",
+          "Cloud Firestore",
+          "error",
+          "No se pudo inicializar."
+        );
+
+        showMessage(
+          "No se pudo iniciar Firebase. El registro está desactivado.\n\n" +
+          technicalError(error),
+          "error"
+        );
+
+        setButtonState();
+      }
+    }
+
+    /*
+      2. Diagnósticos de conexión.
+      Authentication se comprueba mediante una llamada de lectura
+      de configuración pública del servicio.
+      Firestore se comprueba leyendo un documento de prueba que no
+      se crea ni se modifica. Un permiso denegado se informa aparte.
+    */
+    async function runDiagnostics() {
+      if (diagnosticRunning) return;
+
+      if (!auth || !db) {
+        showMessage(
+          "Firebase no está inicializado. Revisa los errores del diagnóstico.",
+          "error"
+        );
+        return;
+      }
+
+      diagnosticRunning = true;
+      diagnosticButton.disabled = true;
+      diagnosticButton.textContent = "Comprobando...";
+
+      setDiagnostic(
+        "network",
+        "Conexión a internet",
+        "pending",
+        "Comprobando acceso a los servicios..."
+      );
+
+      setDiagnostic(
+        "auth",
+        "Firebase Authentication",
+        "pending",
+        "Comprobando disponibilidad del servicio..."
+      );
+
+      setDiagnostic(
+        "firestore",
+        "Cloud Firestore",
+        "pending",
+        "Comprobando acceso de lectura..."
+      );
+
+      try {
+        /*
+          No se crean usuarios durante este diagnóstico.
+          Esta solicitud comprueba el endpoint de configuración
+          pública de Identity Toolkit.
+        */
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/projects/" +
+            encodeURIComponent(firebaseApp.options.projectId) +
+            "?key=" +
+            encodeURIComponent(firebaseApp.options.apiKey),
+          { method: "GET" }
+        );
+
+        if (response.ok) {
+          setDiagnostic(
+            "auth",
+            "Firebase Authentication",
+            "ok",
+            "El servicio respondió correctamente."
+          );
+
+          setDiagnostic(
+            "network",
+            "Conexión a internet",
+            "ok",
+            "Se pudo contactar con Firebase Authentication."
+          );
+        } else {
+          const responseText = await response.text();
+
+          setDiagnostic(
+            "auth",
+            "Firebase Authentication",
+            "error",
+            "El servicio respondió HTTP " + response.status +
+              ". " + responseText.slice(0, 350)
+          );
+
+          setDiagnostic(
+            "network",
+            "Conexión a internet",
+            "warn",
+            "Hay respuesta del servidor, pero la solicitud fue rechazada."
+          );
+        }
+      } catch (error) {
+        setDiagnostic(
+          "auth",
+          "Firebase Authentication",
+          "error",
+          "No se pudo contactar con el servicio. " +
+            (error.message || String(error))
+        );
+
+        setDiagnostic(
+          "network",
+          "Conexión a internet",
+          "error",
+          "Falló la conexión o el navegador bloqueó la solicitud."
+        );
+      }
+
+      try {
+        /*
+          Documento de diagnóstico deliberadamente inexistente.
+          No contiene información médica ni datos personales.
+          No se crea ni modifica ningún documento.
+        */
+        await getDoc(
+          doc(db, "_diagnostics", "connection-check")
+        );
+
+        setDiagnostic(
+          "firestore",
+          "Cloud Firestore",
+          "ok",
+          "La lectura de prueba se completó. La conexión funciona."
+        );
+
+      } catch (error) {
+        const code = error?.code || "";
+
+        if (
+          code === "permission-denied" ||
+          code === "firestore/permission-denied"
+        ) {
+          setDiagnostic(
+            "firestore",
+            "Cloud Firestore",
+            "warn",
+            "El servidor respondió, pero las reglas denegaron la lectura. " +
+            "La conexión existe; revisa las reglas si deseas permitir esta prueba. " +
+            technicalError(error)
+          );
+        } else {
+          setDiagnostic(
+            "firestore",
+            "Cloud Firestore",
+            "error",
+            "La prueba de lectura falló. " + technicalError(error)
+          );
+        }
+      }
+
+      diagnosticRunning = false;
+      diagnosticButton.disabled = false;
+      diagnosticButton.textContent = "Volver a comprobar conexión";
+
+      setButtonState();
+    }
+
+    diagnosticButton.addEventListener("click", runDiagnostics);
+
+    /*
+      3. Registro real.
+      Primero crea la identidad y después guarda el perfil básico.
+    */
+    registerForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      clearMessage();
+
+      if (registrationRunning) return;
+
+      if (initializationError || !authReady || !firestoreSdkReady) {
+        showMessage(
+          "No se puede registrar porque Firebase no está listo.\n\n" +
+          technicalError(initializationError),
+          "error"
+        );
+        return;
+      }
+
+      if (!registerForm.reportValidity()) {
+        showMessage(
+          "Revisa los campos obligatorios y la casilla de aceptación.",
+          "error"
+        );
+        return;
+      }
+
+      const name = $("name").value.trim();
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const consent = $("consent").checked;
+
+      if (name.length < 2) {
+        showMessage("Escribe tu nombre completo.", "error");
+        $("name").focus();
+        return;
+      }
+
+      if (!consent) {
+        showMessage(
+          "Debes marcar la casilla de aceptación para continuar.",
+          "error"
+        );
+        $("consent").focus();
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage(
+          "La contraseña debe tener al menos 8 caracteres.",
+          "error"
+        );
+        $("password").focus();
+        return;
+      }
+
+      registrationRunning = true;
+      setButtonState();
+
+      setDiagnostic(
+        "registration",
+        "Registro de cuenta",
+        "pending",
+        "Solicitando la creación de la cuenta..."
+      );
+
+      setDiagnostic(
+        "profile",
+        "Documento del usuario en Firestore",
+        "pending",
+        "Esperando la creación de la cuenta..."
+      );
+
+      let createdUser = null;
+
+      try {
+        /*
+          PASO A: crear la cuenta en Authentication.
+        */
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        createdUser = credential.user;
+
+        setDiagnostic(
+          "registration",
+          "Registro de cuenta",
+          "ok",
+          "Cuenta creada en Firebase Authentication. UID: " +
+            createdUser.uid
+        );
+
+        /*
+          PASO B: guardar el nombre de perfil en Authentication.
+        */
+        try {
+          await updateProfile(createdUser, {
+            displayName: name
+          });
+        } catch (profileError) {
+          console.warn(
+            "No se pudo actualizar displayName en Authentication:",
+            profileError
+          );
+
+          setDiagnostic(
+            "profile",
+            "Documento del usuario en Firestore",
+            "pending",
+            "Cuenta creada. Continuando con el perfil de Firestore."
+          );
+        }
+
+        /*
+          PASO C: guardar el documento privado del usuario.
+          Las reglas deben permitir al usuario escribir únicamente
+          su propio documento /users/{uid}.
+        */
+        try {
+          await setDoc(doc(db, "users", createdUser.uid), {
+            uid: createdUser.uid,
+            email: createdUser.email,
+            displayName: name,
+            createdAt: serverTimestamp()
+          });
+
+          setDiagnostic(
+            "profile",
+            "Documento del usuario en Firestore",
+            "ok",
+            "Perfil guardado en users/" + createdUser.uid
+          );
+
+        } catch (firestoreError) {
+          setDiagnostic(
+            "profile",
+            "Documento del usuario en Firestore",
+            "error",
+            "La cuenta de Authentication sí existe, pero falló la escritura. " +
+              technicalError(firestoreError)
+          );
+
+          throw Object.assign(
+            new Error(
+              "La cuenta se creó en Authentication, pero no se pudo guardar " +
+              "el perfil en Firestore. No vuelvas a registrarte con el mismo " +
+              "correo; revisa las reglas de Firestore e inicia sesión para " +
+              "recuperar la sesión creada."
+            ),
+            {
+              code: firestoreError?.code || "firestore/write-failed",
+              originalError: firestoreError,
+              authAccountCreated: true
+            }
+          );
+        }
+
+        showMessage(
+          "¡Cuenta creada correctamente!\n\n" +
+          "Authentication: correcto\n" +
+          "Firestore: correcto\n" +
+          "Correo: " + createdUser.email + "\n\n" +
+          "Abriendo tu panel...",
+          "success"
+        );
+
+        /*
+          Dejar unos instantes para leer el resultado.
+        */
+        setTimeout(() => {
+          window.location.assign("panel.html");
+        }, 1800);
+
+      } catch (error) {
+        console.error("[QR Médico] Error de registro:", error);
+
+        const accountCreated = error?.authAccountCreated === true;
+
+        if (!accountCreated) {
+          setDiagnostic(
+            "registration",
+            "Registro de cuenta",
+            "error",
+            explainFirebaseError(error) + "\n" + technicalError(error)
+          );
+        }
+
+        if (isNetworkError(error)) {
+          setDiagnostic(
+            "network",
+            "Conexión a internet",
+            "error",
+            "Se produjo un error de red durante el registro."
+          );
+        }
+
+        showMessage(
+          (accountCreated
+            ? "La cuenta existe en Authentication, pero el perfil no se guardó.\n\n"
+            : "No se pudo completar el registro.\n\n") +
+          explainFirebaseError(error) +
+          "\n\n" + technicalError(error),
+          "error"
+        );
+
+      } finally {
+        registrationRunning = false;
+        setButtonState();
+      }
+    });
+
+    /*
+      Iniciar Firebase.
+    */
+    initializeFirebase();
+  </script>
+
+  <noscript>
+    <div style="margin:20px;padding:16px;background:#fee2e2;color:#991b1b">
+      JavaScript está desactivado. QR Médico necesita JavaScript para
+      conectarse con Firebase y crear cuentas.
+    </div>
+  </noscript>
+
+</body>
+  </html>
