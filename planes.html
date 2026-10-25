@@ -6,19 +6,88 @@
   <meta name="theme-color" content="#0b5fff">
   <meta name="description" content="Conoce los planes ilustrativos de QR Médico.">
   <title>Planes y precios | QR Médico</title>
+
   <link rel="stylesheet" href="assets/css/styles.css">
+
+  <style>
+    /* Diagnóstico técnico independiente del CSS principal */
+    .system-diagnostic {
+      margin: 24px auto;
+      padding: 16px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    .system-diagnostic summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .system-diagnostic h2 {
+      font-size: 17px;
+      margin: 14px 0;
+    }
+
+    .diagnostic-result {
+      padding: 7px 0;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+    }
+
+    .diagnostic-result:last-child {
+      border-bottom: 0;
+    }
+
+    .diagnostic-ok { color: #166534; }
+    .diagnostic-error { color: #b91c1c; }
+    .diagnostic-warning { color: #92400e; }
+
+    .diagnostic-button {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: white;
+      color: #1e293b;
+      cursor: pointer;
+    }
+
+    .diagnostic-note {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+      outline: 2px solid #0b5fff;
+    }
+  </style>
 </head>
+
 <body>
+
 <header class="site-header">
   <a class="brand" href="index.html" aria-label="QR Médico, inicio">
-    <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+    <span class="brand-mark">+</span>
+    <span>QR <b>Médico</b></span>
   </a>
-  <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
-  <nav class="nav-links" aria-label="Navegación principal">
+
+  <button
+    class="menu-toggle"
+    type="button"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+    aria-controls="main-navigation"
+  >☰</button>
+
+  <nav class="nav-links" id="main-navigation" aria-label="Navegación principal">
     <a href="index.html#como-funciona">Cómo funciona</a>
     <a href="planes.html" aria-current="page">Planes</a>
     <a href="index.html#privacidad">Privacidad</a>
   </nav>
+
   <div class="nav-actions">
     <a class="btn btn-quiet" href="login.html">Iniciar sesión</a>
     <a class="btn btn-primary" href="registro.html">Crear cuenta</a>
@@ -26,13 +95,18 @@
 </header>
 
 <main class="container page-main">
+
   <div class="section-heading">
     <span class="eyebrow">PLANES DE SUSCRIPCIÓN</span>
     <h1>Un plan para cada familia.</h1>
-    <p>Elige la cantidad de perfiles que te gustaría administrar. Estos precios son ilustrativos y deben validarse antes del lanzamiento.</p>
+    <p>
+      Elige la cantidad de perfiles que te gustaría administrar.
+      Estos precios son ilustrativos y deben validarse antes del lanzamiento.
+    </p>
   </div>
 
   <div class="pricing-grid">
+
     <article class="price-card">
       <span class="price-label">INDIVIDUAL</span>
       <h2>Para ti</h2>
@@ -85,19 +159,51 @@
       </ul>
       <a class="btn btn-outline full" href="registro.html">Comenzar</a>
     </article>
+
   </div>
 
   <aside class="notice">
-    <strong>Nota:</strong> los precios mostrados son hipótesis iniciales. En esta versión no se realizan cobros ni se activan suscripciones. Los planes, sus condiciones y la pasarela de pago se confirmarán antes del lanzamiento.
+    <strong>Nota:</strong>
+    los precios mostrados son hipótesis iniciales.
+    En esta versión no se realizan cobros ni se activan suscripciones.
+    Los planes, sus condiciones y la pasarela de pago se confirmarán
+    antes del lanzamiento.
   </aside>
+
+  <!-- Diagnóstico visible para el desarrollador -->
+  <details class="system-diagnostic">
+    <summary>Diagnóstico técnico de esta página</summary>
+
+    <h2>Estado del sistema</h2>
+
+    <div id="diagnostic-results" aria-live="polite">
+      <div class="diagnostic-result">⏳ Iniciando comprobaciones...</div>
+    </div>
+
+    <button
+      type="button"
+      id="run-diagnostics"
+      class="diagnostic-button"
+    >Volver a comprobar</button>
+
+    <p class="diagnostic-note">
+      Esta página pública no necesita conectarse a Firebase.
+      La autenticación y la base de datos se comprobarán en las
+      páginas que utilizan esos servicios.
+    </p>
+  </details>
+
 </main>
 
 <footer class="site-footer">
   <div class="container footer-inner">
     <a class="brand brand-footer" href="index.html" aria-label="QR Médico, inicio">
-      <span class="brand-mark">+</span><span>QR <b>Médico</b></span>
+      <span class="brand-mark">+</span>
+      <span>QR <b>Médico</b></span>
     </a>
+
     <span>© 2026 QR Médico · Información de emergencia bajo tu control.</span>
+
     <div>
       <a href="index.html">Inicio</a>
       <a href="login.html">Iniciar sesión</a>
@@ -105,6 +211,162 @@
   </div>
 </footer>
 
-<!-- app.js se añadirá cuando implementemos el menú interactivo. -->
+<script>
+(() => {
+  "use strict";
+
+  const results = document.getElementById("diagnostic-results");
+  const runButton = document.getElementById("run-diagnostics");
+  const menuButton = document.querySelector(".menu-toggle");
+  const navigation = document.getElementById("main-navigation");
+
+  function report(title, status, detail) {
+    const row = document.createElement("div");
+    row.className = "diagnostic-result diagnostic-" + status;
+
+    const symbol = status === "ok" ? "✔"
+      : status === "error" ? "✖" : "⚠";
+
+    row.textContent = symbol + " " + title + ": " + detail;
+    results.appendChild(row);
+  }
+
+  function setMenu(open) {
+    if (!menuButton || !navigation) return;
+
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute(
+      "aria-label",
+      open ? "Cerrar menú" : "Abrir menú"
+    );
+
+    navigation.classList.toggle("open", open);
+    navigation.classList.toggle("is-open", open);
+  }
+
+  if (menuButton && navigation) {
+    menuButton.addEventListener("click", () => {
+      const isOpen =
+        menuButton.getAttribute("aria-expanded") === "true";
+
+      setMenu(!isOpen);
+    });
+
+    navigation.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => setMenu(false));
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setMenu(false);
+    });
+  }
+
+  function runDiagnostics() {
+    results.replaceChildren();
+
+    report(
+      "JavaScript",
+      "ok",
+      "El código de diagnóstico se está ejecutando."
+    );
+
+    const stylesheet = [...document.styleSheets].some(sheet => {
+      try {
+        return sheet.href &&
+          new URL(sheet.href).pathname.endsWith("/assets/css/styles.css");
+      } catch {
+        return false;
+      }
+    });
+
+    report(
+      "Hoja de estilos",
+      stylesheet ? "ok" : "error",
+      stylesheet
+        ? "Se encontró styles.css."
+        : "No se encontró styles.css. Comprueba la ruta y el nombre."
+    );
+
+    report(
+      "Menú móvil",
+      menuButton && navigation ? "ok" : "error",
+      menuButton && navigation
+        ? "Se encontraron el botón y la navegación."
+        : "Falta el botón del menú o el elemento de navegación."
+    );
+
+    const requiredPages = [
+      "index.html",
+      "login.html",
+      "registro.html",
+      "planes.html"
+    ];
+
+    const currentPath = location.pathname;
+    const base = currentPath.slice(
+      0,
+      currentPath.lastIndexOf("/") + 1
+    );
+
+    requiredPages.forEach(page => {
+      const url = base + page;
+      const link = document.querySelector(
+        'a[href="' + page + '"]'
+      );
+
+      report(
+        "Enlace a " + page,
+        link ? "ok" : "warning",
+        link
+          ? "Existe al menos un enlace en esta página."
+          : "No hay un enlace directo a esta página."
+      );
+    });
+
+    const planLinks = [...document.querySelectorAll(
+      ".pricing-grid a[href]"
+    )];
+
+    const incorrectPlanLinks = planLinks.filter(link => {
+      return link.getAttribute("href") !== "registro.html";
+    });
+
+    report(
+      "Botones de planes",
+      planLinks.length === 4 && incorrectPlanLinks.length === 0
+        ? "ok" : "warning",
+      planLinks.length + " botones encontrados; " +
+        incorrectPlanLinks.length + " destinos inesperados."
+    );
+
+    report(
+      "Firebase",
+      "ok",
+      "No se requiere Firebase en esta página de precios."
+    );
+
+    report(
+      "Suscripciones",
+      "warning",
+      "Los precios son ilustrativos; los cobros aún no están activos."
+    );
+  }
+
+  window.addEventListener("error", event => {
+    if (!results) return;
+
+    report(
+      "Error de JavaScript",
+      "error",
+      event.message || "Error no identificado."
+    );
+  });
+
+  runButton.addEventListener("click", runDiagnostics);
+
+  runDiagnostics();
+})();
+</script>
+
 </body>
-</html>
+                                           </html>
