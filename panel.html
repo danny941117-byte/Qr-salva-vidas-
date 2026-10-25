@@ -4,44 +4,868 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b4dcc">
+  <meta name="description" content="Panel privado de QR Médico">
   <title>Mi panel | QR Médico</title>
+
   <link rel="stylesheet" href="assets/css/styles.css">
-  <script type="module" src="assets/js/app.js"></script>
+
+  <style>
+    .diagnostic-box {
+      margin-top: 24px;
+      padding: 16px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    .diagnostic-box h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .diagnostic-item {
+      padding: 9px 0;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .diagnostic-item:last-child {
+      border-bottom: 0;
+    }
+
+    .status-ok { color: #166534; }
+    .status-error { color: #b91c1c; }
+    .status-warning { color: #92400e; }
+    .status-pending { color: #64748b; }
+
+    .diagnostic-detail {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .diagnostic-button {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: #fff;
+      color: #1e293b;
+      cursor: pointer;
+    }
+
+    .diagnostic-button:disabled,
+    #logout-button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    #panel-message {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    #panel-message.visible {
+      display: block;
+    }
+
+    #panel-message[data-type="error"] {
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+    }
+
+    #panel-message[data-type="success"] {
+      color: #166534;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+    }
+
+    #panel-message[data-type="warning"] {
+      color: #92400e;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+    }
+
+    #panel-content[hidden],
+    #panel-loading[hidden] {
+      display: none !important;
+    }
+
+    .technical-note {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
+
 <body data-page="panel">
+
   <main class="auth-page panel-page">
+
     <header class="panel-header">
-      <a class="brand" href="index.html">
-        <span class="brand-mark">+</span><span>QR <strong>Médico</strong></span>
+      <a class="brand" href="index.html" aria-label="QR Médico, inicio">
+        <span class="brand-mark">+</span>
+        <span>QR <strong>Médico</strong></span>
       </a>
-      <button id="logout-button" class="button-secondary" type="button">Cerrar sesión</button>
+
+      <button
+        id="logout-button"
+        class="button-secondary"
+        type="button"
+        disabled
+      >
+        Comprobando sesión...
+      </button>
     </header>
 
-    <section class="auth-card panel-card">
-      <p class="eyebrow">Área privada</p>
+    <!-- Estado inicial -->
+    <section id="panel-loading" class="auth-card panel-card">
+      <h1>Verificando tu sesión</h1>
+      <p id="loading-message" role="status" aria-live="polite">
+        Conectando con Firebase Authentication...
+      </p>
+    </section>
+
+    <!-- Mensajes generales -->
+    <div
+      id="panel-message"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <!-- Solo se muestra cuando se confirma una sesión -->
+    <section id="panel-content" class="auth-card panel-card" hidden>
+
+      <p class="eyebrow">ÁREA PRIVADA</p>
+
       <h1 id="panel-name">Mi espacio médico</h1>
-      <p>Sesión iniciada como <strong id="panel-email">Verificando sesión…</strong></p>
+
+      <p>
+        Sesión iniciada como
+        <strong id="panel-email">Verificando...</strong>
+      </p>
 
       <div class="panel-notice">
         <h2>Bienvenido a QR Médico</h2>
-        <p>La autenticación está conectada con Firebase. En la siguiente etapa añadiremos
-          la administración de perfiles médicos familiares y la generación de códigos QR.</p>
+
+        <p>
+          Tu sesión ha sido verificada mediante Firebase Authentication.
+          Estamos preparando la administración de perfiles médicos
+          familiares y la generación de códigos QR.
+        </p>
       </div>
 
       <div class="panel-grid">
+
         <article class="panel-tile">
           <span aria-hidden="true">＋</span>
           <h2>Perfiles médicos</h2>
-          <p>La gestión de perfiles se habilitará en la siguiente etapa.</p>
+          <p>
+            La gestión de perfiles se habilitará en la siguiente etapa.
+          </p>
         </article>
+
         <article class="panel-tile">
           <span aria-hidden="true">▦</span>
           <h2>Códigos QR</h2>
-          <p>Los códigos se crearán cuando esté listo el módulo de perfiles.</p>
+          <p>
+            Los códigos se crearán cuando esté listo el módulo de perfiles.
+          </p>
         </article>
+
       </div>
-      <p class="security-note">No introduzcas todavía datos médicos reales. Primero configuraremos y probaremos las reglas de seguridad de Firestore.</p>
+
+      <p class="security-note">
+        No introduzcas todavía datos médicos reales.
+        Primero terminaremos de probar los permisos y las reglas
+        de seguridad de Firestore.
+      </p>
+
     </section>
+
+    <!-- Diagnóstico visible -->
+    <section class="diagnostic-box">
+
+      <h2>Diagnóstico del sistema</h2>
+
+      <div id="diagnostic-results" aria-live="polite">
+        <div class="diagnostic-item status-pending">
+          Esperando el inicio de JavaScript...
+        </div>
+      </div>
+
+      <button
+        id="diagnostic-button"
+        class="diagnostic-button"
+        type="button"
+      >
+        Volver a comprobar
+      </button>
+
+      <p class="technical-note">
+        El diagnóstico no modifica los datos médicos. La lectura del
+        perfil utiliza el UID de la sesión autenticada.
+      </p>
+
+    </section>
+
   </main>
+
+  <script>
+    /*
+      Este código se ejecuta antes del módulo Firebase.
+      Ayuda a identificar errores generales de JavaScript.
+    */
+    window.__QR_PANEL_SCRIPT_STARTED__ = true;
+
+    window.addEventListener("error", function(event) {
+      const results = document.getElementById("diagnostic-results");
+      if (!results) return;
+
+      const row = document.createElement("div");
+      row.className = "diagnostic-item status-error";
+
+      row.textContent =
+        "✖ Error de JavaScript: " +
+        (event.message || "Error no identificado") +
+        (event.filename
+          ? "\nArchivo: " + event.filename.split("/").pop()
+          : "") +
+        (event.lineno ? "\nLínea: " + event.lineno : "");
+
+      results.appendChild(row);
+    });
+
+    window.addEventListener("unhandledrejection", function(event) {
+      const message = document.getElementById("panel-message");
+      if (!message) return;
+
+      message.dataset.type = "error";
+      message.classList.add("visible");
+      message.textContent =
+        "Error inesperado: " +
+        (event.reason?.message || String(event.reason));
+    });
+  </script>
+
+  <script type="module">
+    const $ = id => document.getElementById(id);
+
+    const results = $("diagnostic-results");
+    const loading = $("panel-loading");
+    const loadingMessage = $("loading-message");
+    const content = $("panel-content");
+    const panelMessage = $("panel-message");
+    const logoutButton = $("logout-button");
+    const diagnosticButton = $("diagnostic-button");
+
+    const diagnosticState = new Map();
+
+    let auth = null;
+    let db = null;
+    let doc = null;
+    let getDoc = null;
+    let signOut = null;
+    let onAuthStateChanged = null;
+
+    let currentUser = null;
+    let authReady = false;
+    let observerReady = false;
+    let diagnosisRunning = false;
+    let logoutRunning = false;
+
+    let sessionTimeout = null;
+
+    function setStatus(id, title, status, detail) {
+      diagnosticState.set(id, { title, status, detail });
+      renderStatuses();
+    }
+
+    function renderStatuses() {
+      results.replaceChildren();
+
+      const order = [
+        "javascript",
+        "config",
+        "authsdk",
+        "firesdk",
+        "auth",
+        "session",
+        "firestore",
+        "profile",
+        "logout"
+      ];
+
+      for (const id of order) {
+        const entry = diagnosticState.get(id);
+        if (!entry) continue;
+
+        const row = document.createElement("div");
+        row.className = "diagnostic-item status-" + entry.status;
+
+        const icon = {
+          ok: "✔",
+          error: "✖",
+          warning: "⚠",
+          pending: "⏳"
+        }[entry.status] || "•";
+
+        const title = document.createElement("strong");
+        title.textContent = icon + " " + entry.title;
+
+        const detail = document.createElement("span");
+        detail.className = "diagnostic-detail";
+        detail.textContent = entry.detail;
+
+        row.append(title, detail);
+        results.appendChild(row);
+      }
+    }
+
+    function showMessage(text, type = "warning") {
+      panelMessage.dataset.type = type;
+      panelMessage.textContent = text;
+      panelMessage.classList.add("visible");
+    }
+
+    function clearMessage() {
+      panelMessage.classList.remove("visible");
+      panelMessage.textContent = "";
+    }
+
+    function errorDetails(error) {
+      return [
+        error?.code ? "Código: " + error.code : "",
+        error?.message ? "Detalle: " + error.message : ""
+      ].filter(Boolean).join("\n");
+    }
+
+    function explainError(error) {
+      const code = error?.code || "";
+
+      const explanations = {
+        "auth/network-request-failed":
+          "No se pudo conectar con Firebase Authentication. Comprueba internet.",
+
+        "auth/invalid-api-key":
+          "La API key de Firebase no es válida.",
+
+        "auth/app-not-authorized":
+          "La aplicación o el dominio no está autorizado.",
+
+        "permission-denied":
+          "Firestore denegó el acceso. Revisa las reglas de seguridad.",
+
+        "unauthenticated":
+          "La solicitud a Firestore no tiene una sesión válida.",
+
+        "unavailable":
+          "Firestore no está disponible temporalmente.",
+
+        "failed-precondition":
+          "Firestore requiere una configuración adicional.",
+
+        "auth/user-disabled":
+          "Esta cuenta está deshabilitada.",
+
+        "auth/too-many-requests":
+          "Firebase limitó temporalmente las solicitudes."
+      };
+
+      return explanations[code] ||
+        "Se produjo un error. Revisa el código y el detalle técnico.";
+    }
+
+    function showLoading(text) {
+      loading.hidden = false;
+      loadingMessage.textContent = text;
+    }
+
+    function hideLoading() {
+      loading.hidden = true;
+    }
+
+    function hidePrivatePanel() {
+      content.hidden = true;
+    }
+
+    function showPrivatePanel(user, profile = null) {
+      hideLoading();
+      content.hidden = false;
+
+      $("panel-email").textContent = user.email || "Correo no disponible";
+
+      $("panel-name").textContent =
+        profile?.displayName ||
+        user.displayName ||
+        "Mi espacio médico";
+
+      logoutButton.disabled = false;
+      logoutButton.textContent = "Cerrar sesión";
+    }
+
+    function setSignedOut(message) {
+      currentUser = null;
+      authReady = true;
+
+      hidePrivatePanel();
+      showLoading(message);
+
+      logoutButton.disabled = true;
+      logoutButton.textContent = "Sin sesión";
+
+      setStatus(
+        "session",
+        "Sesión de usuario",
+        "warning",
+        "No existe una sesión autenticada."
+      );
+
+      showMessage(
+        "Para acceder al panel debes iniciar sesión. Te llevaremos a la página de acceso.",
+        "warning"
+      );
+
+      setTimeout(() => {
+        window.location.replace("login.html");
+      }, 1800);
+    }
+
+    async function initializePanel() {
+      setStatus(
+        "javascript",
+        "JavaScript",
+        "ok",
+        "El módulo del panel está ejecutándose."
+      );
+
+      setStatus(
+        "config",
+        "Configuración Firebase",
+        "pending",
+        "Cargando assets/js/firebase-config.js..."
+      );
+
+      setStatus(
+        "authsdk",
+        "SDK de Authentication",
+        "pending",
+        "Cargando funciones de sesión..."
+      );
+
+      setStatus(
+        "firesdk",
+        "SDK de Firestore",
+        "pending",
+        "Cargando funciones de base de datos..."
+      );
+
+      try {
+        /*
+          Importamos el archivo compartido del proyecto.
+          Conserva su versión SDK 10.14.1.
+        */
+        const configModule = await import(
+          "./assets/js/firebase-config.js"
+        );
+
+        auth = configModule.auth;
+        db = configModule.db;
+
+        if (!auth || !db) {
+          throw new Error(
+            "firebase-config.js no exportó auth o db."
+          );
+        }
+
+        setStatus(
+          "config",
+          "Configuración Firebase",
+          "ok",
+          "Proyecto inicializado mediante firebase-config.js."
+        );
+
+        const authModule = await import(
+          "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"
+        );
+
+        const firestoreModule = await import(
+          "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"
+        );
+
+        onAuthStateChanged = authModule.onAuthStateChanged;
+        signOut = authModule.signOut;
+
+        doc = firestoreModule.doc;
+        getDoc = firestoreModule.getDoc;
+
+        setStatus(
+          "authsdk",
+          "SDK de Authentication",
+          "ok",
+          "Funciones importadas correctamente."
+        );
+
+        setStatus(
+          "firesdk",
+          "SDK de Firestore",
+          "ok",
+          "Funciones importadas correctamente."
+        );
+
+        authReady = true;
+
+        setStatus(
+          "auth",
+          "Firebase Authentication",
+          "ok",
+          "Servicio inicializado."
+        );
+
+        setStatus(
+          "firestore",
+          "Cloud Firestore",
+          "ok",
+          "Servicio inicializado; falta leer el perfil."
+        );
+
+        /*
+          Esperar al estado real de autenticación.
+          No mostramos el panel privado hasta confirmar usuario.
+        */
+        sessionTimeout = setTimeout(() => {
+          if (!observerReady) {
+            setStatus(
+              "session",
+              "Sesión de usuario",
+              "error",
+              "Firebase no confirmó el estado de sesión a tiempo."
+            );
+
+            showMessage(
+              "No se pudo confirmar la sesión en 12 segundos. " +
+              "Comprueba la conexión y recarga la página.",
+              "error"
+            );
+
+            showLoading("No se pudo confirmar la sesión.");
+          }
+        }, 12000);
+
+        onAuthStateChanged(auth, async user => {
+          observerReady = true;
+          clearTimeout(sessionTimeout);
+          currentUser = user || null;
+
+          if (!user) {
+            setSignedOut("No hay sesión activa. Volviendo al inicio de sesión...");
+            return;
+          }
+
+          clearMessage();
+
+          setStatus(
+            "session",
+            "Sesión de usuario",
+            "ok",
+            "Sesión confirmada. UID: " + user.uid
+          );
+
+          logoutButton.disabled = false;
+          logoutButton.textContent = "Cerrar sesión";
+
+          showLoading("Sesión confirmada. Consultando tu perfil...");
+
+          try {
+            /*
+              Leer exclusivamente el documento del usuario autenticado.
+            */
+            const reference = doc(db, "users", user.uid);
+            const snapshot = await getDoc(reference);
+
+            if (snapshot.exists()) {
+              const profile = snapshot.data();
+
+              setStatus(
+                "profile",
+                "Perfil en Firestore",
+                "ok",
+                "Documento users/" + user.uid + " leído correctamente."
+              );
+
+              setStatus(
+                "firestore",
+                "Cloud Firestore",
+                "ok",
+                "Lectura del perfil completada."
+              );
+
+              showPrivatePanel(user, profile);
+
+            } else {
+              setStatus(
+                "profile",
+                "Perfil en Firestore",
+                "warning",
+                "No existe users/" + user.uid + ". La cuenta puede existir sin perfil guardado."
+              );
+
+              showPrivatePanel(user);
+
+              showMessage(
+                "Tu sesión está activa, pero no encontramos el documento " +
+                "de tu perfil en Firestore. No necesitas registrarte otra vez. " +
+                "Revisaremos las reglas o el proceso de registro.",
+                "warning"
+              );
+            }
+
+          } catch (error) {
+            console.error("[QR Médico] Error al leer el perfil:", error);
+
+            setStatus(
+              "profile",
+              "Perfil en Firestore",
+              "error",
+              explainError(error) + "\n" + errorDetails(error)
+            );
+
+            setStatus(
+              "firestore",
+              "Cloud Firestore",
+              "error",
+              "No se pudo leer el perfil del usuario."
+            );
+
+            /*
+              Authentication sí confirmó la sesión.
+              Mostramos el panel, pero avisamos que el perfil no se verificó.
+            */
+            showPrivatePanel(user);
+
+            showMessage(
+              "Tu sesión es válida, pero no pudimos consultar tu perfil en Firestore.\n\n" +
+              explainError(error) + "\n\n" + errorDetails(error),
+              "error"
+            );
+          }
+        }, error => {
+          observerReady = true;
+          clearTimeout(sessionTimeout);
+
+          console.error("[QR Médico] Error de sesión:", error);
+
+          setStatus(
+            "session",
+            "Sesión de usuario",
+            "error",
+            explainError(error) + "\n" + errorDetails(error)
+          );
+
+          showMessage(
+            "Firebase no pudo verificar la sesión.\n\n" +
+            explainError(error) + "\n\n" + errorDetails(error),
+            "error"
+          );
+
+          showLoading("No se pudo verificar la sesión.");
+        });
+
+      } catch (error) {
+        console.error("[QR Médico] Error al iniciar el panel:", error);
+
+        clearTimeout(sessionTimeout);
+
+        setStatus(
+          "config",
+          "Configuración Firebase",
+          "error",
+          "No se pudo inicializar el panel.\n" + errorDetails(error)
+        );
+
+        setStatus(
+          "authsdk",
+          "SDK de Authentication",
+          "error",
+          "No se pudo cargar o inicializar."
+        );
+
+        setStatus(
+          "firesdk",
+          "SDK de Firestore",
+          "error",
+          "No se pudo cargar o inicializar."
+        );
+
+        showLoading("No se pudo conectar con Firebase.");
+
+        showMessage(
+          "El panel no pudo inicializar Firebase. Comprueba que el archivo " +
+          "assets/js/firebase-config.js exista y esté publicado.\n\n" +
+          errorDetails(error),
+          "error"
+        );
+      }
+    }
+
+    async function checkConnection() {
+      if (diagnosisRunning) return;
+
+      diagnosisRunning = true;
+      diagnosticButton.disabled = true;
+      diagnosticButton.textContent = "Comprobando...";
+
+      try {
+        if (!authReady || !auth || !db) {
+          throw new Error(
+            "Firebase no está inicializado. Revisa el diagnóstico de arriba."
+          );
+        }
+
+        setStatus(
+          "auth",
+          "Firebase Authentication",
+          "ok",
+          "Servicio inicializado."
+        );
+
+        if (!currentUser) {
+          setStatus(
+            "session",
+            "Sesión de usuario",
+            "warning",
+            "No hay un usuario autenticado."
+          );
+        } else {
+          setStatus(
+            "session",
+            "Sesión de usuario",
+            "ok",
+            "Usuario autenticado: " + currentUser.uid
+          );
+
+          const snapshot = await getDoc(
+            doc(db, "users", currentUser.uid)
+          );
+
+          if (snapshot.exists()) {
+            setStatus(
+              "profile",
+              "Perfil en Firestore",
+              "ok",
+              "El documento del usuario es accesible."
+            );
+
+            setStatus(
+              "firestore",
+              "Cloud Firestore",
+              "ok",
+              "Lectura de perfil correcta."
+            );
+          } else {
+            setStatus(
+              "profile",
+              "Perfil en Firestore",
+              "warning",
+              "El documento del usuario no existe."
+            );
+          }
+        }
+
+      } catch (error) {
+        console.error("[QR Médico] Diagnóstico manual:", error);
+
+        setStatus(
+          "firestore",
+          "Cloud Firestore",
+          "error",
+          explainError(error) + "\n" + errorDetails(error)
+        );
+
+      } finally {
+        diagnosisRunning = false;
+        diagnosticButton.disabled = false;
+        diagnosticButton.textContent = "Volver a comprobar";
+      }
+    }
+
+    diagnosticButton.addEventListener("click", checkConnection);
+
+    logoutButton.addEventListener("click", async () => {
+      if (!auth || !currentUser || logoutRunning) return;
+
+      logoutRunning = true;
+      logoutButton.disabled = true;
+      logoutButton.textContent = "Cerrando sesión...";
+
+      setStatus(
+        "logout",
+        "Cierre de sesión",
+        "pending",
+        "Solicitando cierre a Firebase..."
+      );
+
+      try {
+        await signOut(auth);
+
+        setStatus(
+          "logout",
+          "Cierre de sesión",
+          "ok",
+          "Firebase cerró la sesión correctamente."
+        );
+
+        showMessage(
+          "Sesión cerrada correctamente. Volviendo al inicio...",
+          "success"
+        );
+
+        setTimeout(() => {
+          window.location.replace("index.html");
+        }, 800);
+
+      } catch (error) {
+        console.error("[QR Médico] Error al cerrar sesión:", error);
+
+        setStatus(
+          "logout",
+          "Cierre de sesión",
+          "error",
+          explainError(error) + "\n" + errorDetails(error)
+        );
+
+        showMessage(
+          "No se pudo cerrar la sesión.\n\n" +
+          explainError(error) + "\n" + errorDetails(error),
+          "error"
+        );
+
+        logoutButton.disabled = false;
+        logoutButton.textContent = "Cerrar sesión";
+
+      } finally {
+        logoutRunning = false;
+      }
+    });
+
+    initializePanel();
+  </script>
+
+  <noscript>
+    <div style="margin:20px;padding:16px;background:#fee2e2;color:#991b1b">
+      JavaScript está desactivado. El panel necesita JavaScript para
+      verificar la sesión con Firebase.
+    </div>
+  </noscript>
+
 </body>
 </html>
